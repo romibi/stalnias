@@ -9,17 +9,74 @@ using UnityEngine;
 public class TileMap : MonoBehaviour {
     public int size_x = 20;
     public int size_y = 10;
-    public float tileSize = 1f; 
+    public float tileSize = 1f;
+
+    public int tileResolution = 32;
+
+    public Texture2D[] tileTextures;
+    public int textureResolution = 32;
+
+    Dictionary<int, Color[]> _tiles;
 
 	// Use this for initialization
 	void Start () {
-        BuildTileMap();
+        BuildMap();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public void BuildMap() {
+        BuildTileMap();
+        BuildTexture();
+    }
+
+    void PrepareTiles() {
+        _tiles = new Dictionary<int, Color[]>();
+        int gid = 0;
+        foreach(Texture2D tileset in tileTextures) {
+            int numTilesPerRow = tileset.width / textureResolution;
+            int numRows = tileset.height / textureResolution;
+
+            for (int id = 0; id < numRows * numTilesPerRow; id++, gid++) {
+                int row = id / numTilesPerRow;
+                int idOfRow = id - (numTilesPerRow * row);
+
+                int invertedRow = numRows - row - 1;
+
+                _tiles.Add(gid, tileset.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
+            }
+        }
+    }
+
+    Color[] getTexturePixels(int id) {
+
+        if(_tiles==null) {
+            PrepareTiles();
+        }
+        return _tiles[id];
+    }
+
+    public void BuildTexture() {
+        int textureWidth = size_x * tileResolution;
+        int textureHeight = size_y * tileResolution;
+
+        Texture2D texture = new Texture2D(textureWidth, textureHeight);
+        
+        for (int y = 0; y < size_y; y++) {
+            for(int x=0; x < size_x; x++) {
+                texture.SetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution, getTexturePixels(15));
+            }
+        }
+        
+        texture.filterMode = FilterMode.Point;
+        texture.Apply();
+
+        MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
+        mesh_renderer.sharedMaterials[0].mainTexture = texture;
+    }
 
     public void BuildTileMap() {
         int numTiles = size_x * size_y;
@@ -40,7 +97,7 @@ public class TileMap : MonoBehaviour {
                 int verticeIndex = y * vsize_x + x;     // verticeRow * rowSize + verticeInRow
                 vertices[verticeIndex] = new Vector3(x * tileSize, y * tileSize);
                 normals[verticeIndex] = Vector3.forward;
-                uv[verticeIndex] = new Vector2((float)x / vsize_x, (float)y / vsize_y);
+                uv[verticeIndex] = new Vector2((float)x / size_x, (float)y / size_y);
             }
         }
 

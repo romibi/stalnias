@@ -9,7 +9,7 @@ public class TileMapInspector : Editor {
         base.OnInspectorGUI();
         if (GUILayout.Button("Rebuild")) {
             TileMap tilemap = (TileMap)target;
-            tilemap.BuildTileMap();
+            tilemap.BuildMap();
         }
     }
 }
