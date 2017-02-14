@@ -10,13 +10,10 @@ public class TileMap : MonoBehaviour {
     public int size_x = 20;
     public int size_y = 10;
     public float tileSize = 1f;
-
-    public int tileResolution = 32;
-
+    
+    Texture2D _mapTileset;
     public Texture2D[] tileTextures;
     public int textureResolution = 32;
-
-    Dictionary<int, Color[]> _tiles;
 
 	// Use this for initialization
 	void Start () {
@@ -29,12 +26,12 @@ public class TileMap : MonoBehaviour {
 	}
 
     public void BuildMap() {
-        BuildTileMap();
         BuildTexture();
+        BuildTileMap();
     }
 
-    void PrepareTiles() {
-        _tiles = new Dictionary<int, Color[]>();
+    void PrepareTileset() {
+        Dictionary<int, Color[]> tiles = new Dictionary<int, Color[]>();
         int gid = 0;
         foreach(Texture2D tileset in tileTextures) {
             int numTilesPerRow = tileset.width / textureResolution;
@@ -46,72 +43,75 @@ public class TileMap : MonoBehaviour {
 
                 int invertedRow = numRows - row - 1;
 
-                _tiles.Add(gid, tileset.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
+                tiles.Add(gid, tileset.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
             }
         }
-    }
 
-    Color[] getTexturePixels(int id) {
-
-        if(_tiles==null) {
-            PrepareTiles();
+        int tilesetwidth = Mathf.CeilToInt(Mathf.Sqrt(gid));
+        _mapTileset = new Texture2D(textureResolution*tilesetwidth, textureResolution*tilesetwidth);
+        
+        for(int tile=0; tile<gid;tile++) {
+            int x = tile % tilesetwidth;
+            int y = tile / tilesetwidth;
+            _mapTileset.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, tiles[tile]);
         }
-        return _tiles[id];
-    }
 
+        _mapTileset.filterMode = FilterMode.Point;
+        _mapTileset.Apply();
+    }
+    
     public void BuildTexture() {
-        int textureWidth = size_x * tileResolution;
-        int textureHeight = size_y * tileResolution;
-
-        Texture2D texture = new Texture2D(textureWidth, textureHeight);
-        
-        for (int y = 0; y < size_y; y++) {
-            for(int x=0; x < size_x; x++) {
-                texture.SetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution, getTexturePixels(15));
-            }
-        }
-        
-        texture.filterMode = FilterMode.Point;
-        texture.Apply();
-
+        PrepareTileset();
         MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-        mesh_renderer.sharedMaterials[0].mainTexture = texture;
+        mesh_renderer.sharedMaterials[0].mainTexture = _mapTileset;
+    }
+
+    Vector2[] getUVForTileType(int id) {
+        int tilesetwidth = _mapTileset.width / textureResolution;
+
+        int x = id % tilesetwidth;
+        int y = id / tilesetwidth;
+
+        Vector2[] uv = new Vector2[4];
+        uv[0]=new Vector2((float)x/tilesetwidth, (float)y/ tilesetwidth);
+        uv[1] = new Vector2((float)(x + 1) / tilesetwidth, (float)y / tilesetwidth);
+        uv[2] = new Vector2((float)x / tilesetwidth, (float)(y+1) / tilesetwidth);
+        uv[3] = new Vector2((float)(x + 1) / tilesetwidth, (float)(y+1) / tilesetwidth);
+
+        return uv;
     }
 
     public void BuildTileMap() {
         int numTiles = size_x * size_y;
-
-        int vsize_x = size_x + 1;
-        int vsize_y = size_y + 1;
-        int numVertices = vsize_x * vsize_y;
+        int numVertices = numTiles*4;
 
         Vector3[] vertices = new Vector3[numVertices];
         Vector3[] normals = new Vector3[numVertices];
         Vector2[] uv = new Vector2[numVertices];
-
         int[] triangleVertices = new int[numTiles * 2 * 3]; // numTiles * numTrianglesPerTile * numVerticesPerTriangle
-
-
-        for(int y=0; y < vsize_y; y++) {
-            for(int x=0; x < vsize_x; x++) {
-                int verticeIndex = y * vsize_x + x;     // verticeRow * rowSize + verticeInRow
-                vertices[verticeIndex] = new Vector3(x * tileSize, y * tileSize);
-                normals[verticeIndex] = Vector3.forward;
-                uv[verticeIndex] = new Vector2((float)x / size_x, (float)y / size_y);
-            }
-        }
-
+        
         for(int y=0; y < size_y; y++) {
             for(int x=0; x < size_x; x++) {
-                int firstTriangleEdgeOfTile = (y * size_x + x) * 2 * 3;     // (tileRow * tileRowSize + tileInRow) * numTrianglesPerTile * numVerticesPerTriangle
-                int firstVerticeOfTile = (y * vsize_x + x);
-                triangleVertices[firstTriangleEdgeOfTile + 0] = firstVerticeOfTile;                     // Bottom Left
-                triangleVertices[firstTriangleEdgeOfTile + 1] = firstVerticeOfTile + vsize_x;           // Top Left (1 row higher)
-                triangleVertices[firstTriangleEdgeOfTile + 2] = firstVerticeOfTile + vsize_x + 1;       // Top Right (1 row higher & 1 vertice right)
+                int verticeTileIndex = (y * size_x + x) * 4;
+                Vector2[] tileuv = getUVForTileType(15);
+                for (int v = 0; v < 4; v++) {
+                    int vx = v%2;
+                    int vy = v/2;
+                    
+                    vertices[verticeTileIndex + v] = new Vector3((x+vx) * tileSize, (y+vy) * tileSize);
+                    normals[verticeTileIndex + v] = Vector3.forward;
+                    uv[verticeTileIndex + v] = tileuv[v];
+                }
 
-                triangleVertices[firstTriangleEdgeOfTile + 3] = firstVerticeOfTile;                // Bottom Left
-                triangleVertices[firstTriangleEdgeOfTile + 4] = firstVerticeOfTile + vsize_x + 1;  // Top Right (1 row higher & 1 vertice right)
-                triangleVertices[firstTriangleEdgeOfTile + 5] = firstVerticeOfTile + 1;            // Bottom Right (1 Vertice to the right)
+                int firstTriangleEdgeOfTile = (y * size_x + x) * 2 * 3;     // (tileRow * tileRowSize + tileInRow) * numTrianglesPerTile * numVerticesPerTriangle
+                
+                triangleVertices[firstTriangleEdgeOfTile + 0] = verticeTileIndex;
+                triangleVertices[firstTriangleEdgeOfTile + 1] = verticeTileIndex + 2;
+                triangleVertices[firstTriangleEdgeOfTile + 2] = verticeTileIndex + 3;
+
+                triangleVertices[firstTriangleEdgeOfTile + 3] = verticeTileIndex;
+                triangleVertices[firstTriangleEdgeOfTile + 4] = verticeTileIndex + 3;
+                triangleVertices[firstTriangleEdgeOfTile + 5] = verticeTileIndex + 1;
             }
         }
 

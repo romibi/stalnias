@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1241306736311078}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.92, y: -5.1015677, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -109,7 +109,6 @@ MonoBehaviour:
   size_x: 20
   size_y: 10
   tileSize: 1
-  tileResolution: 32
   tileTextures:
   - {fileID: 2800000, guid: 72f8a6eb8e36a254e92a19c1640c83f3, type: 3}
   textureResolution: 32
