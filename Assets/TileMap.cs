@@ -12,6 +12,7 @@ public class TileMap : MonoBehaviour {
 
     public Material material;
     public Texture2D mapTileset;
+    public float tileSize = 0.01f;
 
     int _lastgid = 0;
     Dictionary<int, Color[]> _tiles = new Dictionary<int, Color[]>();
@@ -60,6 +61,7 @@ public class TileMap : MonoBehaviour {
 
     void LoadLayers(MapLayer l, float z) {
         GameObject tileLayer = new GameObject(l.name, typeof(TileLayer));
+        tileLayer.hideFlags = HideFlags.DontSave;
         tileLayer.transform.parent = this.transform;
         tileLayer.transform.position = tileLayer.transform.position+new Vector3(0,0,z);
         TileLayer tlcomp = tileLayer.GetComponent<TileLayer>();

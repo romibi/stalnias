@@ -7,9 +7,13 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
 public class TileLayer : MonoBehaviour {
-    public float tileSize = 1f;
-
     Texture2D _mapTileset;
+
+    TileMap tilemap {
+        get {
+            return transform.parent.GetComponent<TileMap>();
+        }
+    }
     
     //public Texture2D[] tileTextures;
     public int textureResolution = 32;
@@ -19,9 +23,8 @@ public class TileLayer : MonoBehaviour {
     // Use this for initialization
     void Start () {
         MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-        TileMap tl = transform.parent.GetComponent<TileMap>();
-        mesh_renderer.sharedMaterials = new Material[] { tl.material };
-        _mapTileset = tl.mapTileset;
+        mesh_renderer.sharedMaterials = new Material[] { tilemap.material };
+        _mapTileset = tilemap.mapTileset;
         mesh_renderer.sharedMaterials[0].mainTexture = _mapTileset;
 
         BuildMap();
@@ -72,7 +75,7 @@ public class TileLayer : MonoBehaviour {
                     int vx = v%2;
                     int vy = v/2;
                     
-                    vertices[verticeTileIndex + v] = new Vector3((x+vx) * tileSize, (y+vy) * tileSize);
+                    vertices[verticeTileIndex + v] = new Vector3((x+vx) * tilemap.tileSize, (y+vy) * tilemap.tileSize);
                     normals[verticeTileIndex + v] = Vector3.forward;
                     uv[verticeTileIndex + v] = tileuv[v];
                 }
