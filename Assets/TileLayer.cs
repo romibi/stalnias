@@ -7,8 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
 public class TileLayer : MonoBehaviour {
-    public int size_x = 20;
-    public int size_y = 10;
     public float tileSize = 1f;
 
     Texture2D _mapTileset;
@@ -16,7 +14,7 @@ public class TileLayer : MonoBehaviour {
     //public Texture2D[] tileTextures;
     public int textureResolution = 32;
 
-    public int[][] layerdata;
+    public MapLayer layerdata;
 
     // Use this for initialization
     void Start () {
@@ -54,6 +52,9 @@ public class TileLayer : MonoBehaviour {
     }
 
     public void BuildTileMap() {
+        int size_x = layerdata.width;
+        int size_y = layerdata.height;
+        
         int numTiles = size_x * size_y;
         int numVertices = numTiles*4;
 
@@ -64,8 +65,9 @@ public class TileLayer : MonoBehaviour {
         
         for(int y=0; y < size_y; y++) {
             for(int x=0; x < size_x; x++) {
+                if (layerdata.tileTypeIdAt(x, y) == 0) continue;
                 int verticeTileIndex = (y * size_x + x) * 4;
-                Vector2[] tileuv = getUVForTileType(15);
+                Vector2[] tileuv = getUVForTileType(layerdata.tileTypeIdAt(x,y));
                 for (int v = 0; v < 4; v++) {
                     int vx = v%2;
                     int vy = v/2;

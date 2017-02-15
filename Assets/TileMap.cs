@@ -1,88 +1,108 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class TileMap : MonoBehaviour {
-    Dictionary<int,GameObject> _layers = new Dictionary<int, GameObject>();
+    Dictionary<string,GameObject> _layers = new Dictionary<string, GameObject>();
 
-    List<Texture2D> tileTextures = new List<Texture2D>();
+    //List<Texture2D> tileTextures = new List<Texture2D>();
     int textureResolution = 32;
 
     public Material material;
     public Texture2D mapTileset;
 
+    int _lastgid = 0;
+    Dictionary<int, Color[]> _tiles = new Dictionary<int, Color[]>();
+
     // Use this for initialization
     void Start() {
-        LoadLayers();
+        LoadMap();
+    }
+
+    // Update is called once per frame
+    void Update() {
+
     }
 
     public void reloadLayers() {
-        Dictionary<int, GameObject> copy = new Dictionary<int, GameObject>(_layers);
-        foreach (KeyValuePair<int,GameObject> layer in copy) {
+        ClearMap();
+        LoadMap();
+    }
+
+    void ClearMap() {
+        Dictionary<string, GameObject> copy = new Dictionary<string, GameObject>(_layers);
+        foreach (KeyValuePair<string, GameObject> layer in copy) {
             _layers.Remove(layer.Key);
+            layer.Value.transform.parent = null;
             DestroyImmediate(layer.Value);
         }
-        tileTextures.Clear();
-        LoadLayers();
+        _lastgid = 0;
+        _tiles.Clear();
     }
 
-    void LoadLayers() {
-        Dictionary<int, int[][]> layers = new Dictionary<int, int[][]>();
-        layers.Add(0, new int[][]{  new int[] { 1,1,1,1,1,1,1,1 },
-                            new int[] { 1,1,1,1,1,1,1,1 },
-                            new int[] { 1,1,1,1,1,1,1,1 },
-                            new int[] { 1,1,1,1,1,1,1,1 },
-                            new int[] { 1,1,1,1,1,1,1,1 } });
-        layers.Add(1, new int[][]{  new int[] { 0,0,0,0,0,0,0,0 },
-                            new int[] { 0,0,0,2,2,0,0,0 },
-                            new int[] { 0,0,2,2,2,2,2,0 },
-                            new int[] { 0,0,0,2,2,0,0,0 },
-                            new int[] { 0,0,0,0,0,0,0,0 } });
+    void LoadMap() {
+        Map map = new Map();
+        
+        foreach(TileSet ts in map.tilesets) {
+            LoadTileset(ts);
+        }
 
-        Texture2D tex = Resources.Load("textures/grass") as Texture2D;
-        tileTextures.Add(tex);
         PrepareTileset();
 
-        foreach (KeyValuePair<int, int[][]> layer in layers) {
-            GameObject tileLayer = new GameObject(layer.Key.ToString(), typeof(TileLayer));
-            tileLayer.transform.parent = this.transform;
-            TileLayer tlcomp = tileLayer.GetComponent<TileLayer>();
-            tlcomp.layerdata = layer.Value;
-            
-            _layers.Add(layer.Key, tileLayer);
+        float z = 0.0f;
+        foreach(MapLayer l in map.layers) {
+            LoadLayers(l, z);
+            z -= 0.01f;
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    void PrepareTileset() {
-        Dictionary<int, Color[]> tiles = new Dictionary<int, Color[]>();
-        int gid = 0;
-        foreach (Texture2D tileset in tileTextures) {
-            int numTilesPerRow = tileset.width / textureResolution;
-            int numRows = tileset.height / textureResolution;
+    void LoadLayers(MapLayer l, float z) {
+        GameObject tileLayer = new GameObject(l.name, typeof(TileLayer));
+        tileLayer.transform.parent = this.transform;
+        tileLayer.transform.position = tileLayer.transform.position+new Vector3(0,0,z);
+        TileLayer tlcomp = tileLayer.GetComponent<TileLayer>();
+        tlcomp.layerdata = l;
 
-            for (int id = 0; id < numRows * numTilesPerRow; id++, gid++) {
-                int row = id / numTilesPerRow;
-                int idOfRow = id - (numTilesPerRow * row);
+        _layers.Add(l.name, tileLayer);
 
-                int invertedRow = numRows - row - 1;
+    }
 
-                tiles.Add(gid, tileset.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
-            }
+    void LoadTileset(TileSet ts) {
+        Texture2D tex = Resources.Load("textures/" + ts.res_name) as Texture2D;
+        if (textureResolution != (tex.width / ts.columns)) {
+            Debug.LogWarning("tileset resolution not equal to map resolution");
         }
 
-        int tilesetwidth = Mathf.CeilToInt(Mathf.Sqrt(gid));
+        if(_lastgid>=ts.firstgid) {
+            Debug.LogWarning("Tileset First GID is smaller than the last used GID");
+        }
+        _lastgid = ts.firstgid;
+
+        //int columns = tileset.width / textureResolution;
+        int numRows = tex.height / textureResolution;
+
+        for (int id = 1; id <= ts.count; id++, _lastgid++) {
+            int row = (id-1) / ts.columns;
+            int idOfRow = (id-1) - (ts.columns * row);
+
+            int invertedRow = numRows - row - 1;
+            
+            _tiles.Add(_lastgid, tex.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
+        }
+    }
+
+    void PrepareTileset() {
+        int tilesetwidth = Mathf.CeilToInt(Mathf.Sqrt(_lastgid));
         mapTileset = new Texture2D(textureResolution * tilesetwidth, textureResolution * tilesetwidth);
 
-        for (int tile = 0; tile < gid; tile++) {
+        for (int tile = 0; tile < _lastgid; tile++) {
             int x = tile % tilesetwidth;
             int y = tile / tilesetwidth;
-            mapTileset.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, tiles[tile]);
+            if (_tiles.ContainsKey(tile)) {
+                mapTileset.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, _tiles[tile]);
+            }
         }
 
         mapTileset.filterMode = FilterMode.Point;
