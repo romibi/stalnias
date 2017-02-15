@@ -18,7 +18,7 @@ public class CameraFollow : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        cam.orthographicSize = (Screen.height / 100f) / 3f;
+        cam.orthographicSize = (Screen.height / 100f) / 4f;
         if(target) {
             transform.position = Vector3.Lerp(transform.position, target.position+camOffset, 0.1f);
         }
