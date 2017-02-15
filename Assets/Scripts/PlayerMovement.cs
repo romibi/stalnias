@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    Rigidbody2D rigidbody;
+    Rigidbody2D rbody;
     Animator animator;
 	// Use this for initialization
 	void Start () {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 	}
 	
@@ -22,6 +22,6 @@ public class PlayerMovement : MonoBehaviour {
             animator.SetBool("iswalking", false);
         }
         
-        rigidbody.MovePosition(rigidbody.position + movement * Time.deltaTime);
+        rbody.MovePosition(rbody.position + movement * Time.deltaTime);
 	}
 }

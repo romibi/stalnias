@@ -106,9 +106,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec81c6734880384dbec680e60606a3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size_x: 20
-  size_y: 10
-  tileSize: 1
-  tileTextures:
-  - {fileID: 2800000, guid: 72f8a6eb8e36a254e92a19c1640c83f3, type: 3}
   textureResolution: 32
