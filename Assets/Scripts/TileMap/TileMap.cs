@@ -11,11 +11,10 @@ public class TileMap : MonoBehaviour {
     int textureResolution = 32;
 
     public Material material;
-    public Texture2D mapTileset;
     public float tileSize = 0.01f;
 
     int _lastgid = 0;
-    Dictionary<int, Color[]> _tiles = new Dictionary<int, Color[]>();
+    public Dictionary<int, Color[]> tiles = new Dictionary<int, Color[]>();
 
     // Use this for initialization
     void Start() {
@@ -40,7 +39,7 @@ public class TileMap : MonoBehaviour {
             DestroyImmediate(layer.Value);
         }
         _lastgid = 0;
-        _tiles.Clear();
+        tiles.Clear();
     }
 
     void LoadMap() {
@@ -50,7 +49,6 @@ public class TileMap : MonoBehaviour {
             LoadTileset(ts);
         }
 
-        PrepareTileset();
 
         float z = 0.0f;
         foreach(MapLayer l in map.layers) {
@@ -72,6 +70,14 @@ public class TileMap : MonoBehaviour {
     }
 
     void LoadTileset(TileSet ts) {
+        if (_lastgid == 0) {
+            Color[] emptytile = new Color[textureResolution * textureResolution];
+            for (int x = 0; x < (textureResolution * textureResolution); x++) {
+                emptytile[x] = new Color(0, 0, 0);
+            }
+            tiles.Add(0, emptytile);
+        }
+
         Texture2D tex = Resources.Load("textures/" + ts.res_name) as Texture2D;
         if (textureResolution != (tex.width / ts.columns)) {
             Debug.LogWarning("tileset resolution not equal to map resolution");
@@ -91,23 +97,7 @@ public class TileMap : MonoBehaviour {
 
             int invertedRow = numRows - row - 1;
             
-            _tiles.Add(_lastgid, tex.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
+            tiles.Add(_lastgid, tex.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
         }
-    }
-
-    void PrepareTileset() {
-        int tilesetwidth = Mathf.CeilToInt(Mathf.Sqrt(_lastgid));
-        mapTileset = new Texture2D(textureResolution * tilesetwidth, textureResolution * tilesetwidth);
-
-        for (int tile = 0; tile < _lastgid; tile++) {
-            int x = tile % tilesetwidth;
-            int y = tile / tilesetwidth;
-            if (_tiles.ContainsKey(tile)) {
-                mapTileset.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, _tiles[tile]);
-            }
-        }
-
-        mapTileset.filterMode = FilterMode.Point;
-        mapTileset.Apply();
     }
 }
