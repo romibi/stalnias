@@ -43,21 +43,29 @@ public class TileMap : MonoBehaviour {
     }
 
     void LoadMap() {
-        Map map = new Map();
+        DMap map = new DMap();
         
-        foreach(TileSet ts in map.tilesets) {
+        foreach(DTileSet ts in map.tilesets) {
             LoadTileset(ts);
         }
 
 
         float z = 0.0f;
-        foreach(MapLayer l in map.layers) {
-            LoadLayers(l, z);
+        foreach(DMapLayer l in map.layers) {
+            if (l.GetType() == typeof(DMapLayerTiles)) {
+                LoadLayers((DMapLayerTiles)l, z);
+            }
+            if(l.GetType() == typeof(DMapLayerObjects)) {
+                if(l.name=="Living") {
+                    GameObject player = GameObject.FindGameObjectWithTag("Player");
+                    player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, z);
+                }
+            }
             z -= 0.1f;
         }
     }
 
-    void LoadLayers(MapLayer l, float z) {
+    void LoadLayers(DMapLayerTiles l, float z) {
         GameObject tileLayer = new GameObject(l.name, typeof(TileLayer));
         tileLayer.hideFlags = HideFlags.DontSave;
         tileLayer.transform.parent = this.transform;
@@ -69,7 +77,7 @@ public class TileMap : MonoBehaviour {
 
     }
 
-    void LoadTileset(TileSet ts) {
+    void LoadTileset(DTileSet ts) {
         if (_lastgid == 0) {
             Color[] emptytile = new Color[textureResolution * textureResolution];
             for (int x = 0; x < (textureResolution * textureResolution); x++) {

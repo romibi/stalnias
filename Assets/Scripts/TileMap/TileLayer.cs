@@ -18,7 +18,7 @@ public class TileLayer : MonoBehaviour {
     //public Texture2D[] tileTextures;
     public int textureResolution = 32;
 
-    public MapLayer layerdata;
+    public DMapLayerTiles layerdata;
 
     // Use this for initialization
     void Start () {
