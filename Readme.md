@@ -11,7 +11,7 @@ The Game Code will be Open Source as well as some Demo Content. Everything else 
 		- generate mesh(-es) (hard coded) ✓
 		- map generating from string (✓)
 		- map loading from db/file
-	- Collision Boxes generating
+	- Collision Boxes generating (✓)
 	…
 - Player
 	- movement ✓
