@@ -16,6 +16,8 @@ public class DMap {
         tilesets.Add(new DTileSet("grass",3,18));
         tilesets.Add(new DTileSet("watergrass", 3, 18, 19));
 
+        getTilesetForId(29).setTileFullCollision(29, true);
+
         layers = new List<DMapLayer>();
         layers.Add(new DMapLayerTiles("bg", width, height, new int[] {16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
                                                                 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
@@ -48,4 +50,14 @@ public class DMap {
         this.tilesets = tilesets;
         this.layers = layers;
     }
+
+    public DTileSet getTilesetForId(int id) {
+        foreach (DTileSet set in tilesets) {
+            if (set.firstgid < id && set.firstgid + set.count >= id) {
+                return set;
+            }
+        }
+        return null;
+    }
+
 }

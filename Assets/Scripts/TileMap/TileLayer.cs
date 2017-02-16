@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(MeshCollider))]
+[RequireComponent(typeof(PolygonCollider2D))]
 public class TileLayer : MonoBehaviour {
     Texture2D _layerTexture;
 
@@ -15,7 +15,6 @@ public class TileLayer : MonoBehaviour {
         }
     }
     
-    //public Texture2D[] tileTextures;
     public int textureResolution = 32;
 
     public DMapLayerTiles layerdata;
@@ -43,7 +42,6 @@ public class TileLayer : MonoBehaviour {
 
         for (int y=0; y < layerdata.height; y++) {
             for(int x=0; x < layerdata.width; x++) {
-                //Debug.Log("_layerTexture.SetPixels(" + (x * textureResolution) + ", " + (y * textureResolution) + ", " + textureResolution + ", " + textureResolution + ", tilemap.tiles[" + layerdata.tileTypeIdAt(x, y) + "]);");
                 if (layerdata.tileTypeIdAt(x, y) != 0) {
                     _layerTexture.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, tilemap.tiles[layerdata.tileTypeIdAt(x, y)]);
                 }
@@ -73,6 +71,8 @@ public class TileLayer : MonoBehaviour {
         Vector3[] normals = new Vector3[numVertices];
         Vector2[] uv = new Vector2[numVertices];
         int[] triangleVertices = new int[numTiles * 2 * 3]; // numTiles * numTrianglesPerTile * numVerticesPerTriangle
+
+        List<Vector2[]> collisionPaths = new List<Vector2[]>();
         
         for(int y=0; y < size_y; y++) {
             for(int x=0; x < size_x; x++) {
@@ -85,6 +85,18 @@ public class TileLayer : MonoBehaviour {
                     vertices[verticeTileIndex + v] = new Vector3((x+vx) * tilemap.tileSize, (y+vy) * tilemap.tileSize);
                     normals[verticeTileIndex + v] = Vector3.forward;
                     uv[verticeTileIndex + v] = new Vector2((float)(x+vx)/(layerdata.width), (float)(y + vy) / layerdata.height);
+                }
+
+                int tileId = layerdata.tileTypeIdAt(x, y);
+                List<Vector2[]> collisions = tilemap.map.getTilesetForId(tileId).getCollisionForTile(tileId);
+                if (collisions != null) {
+                    foreach (Vector2[] collision in collisions) {
+                        Vector2[] path = new Vector2[collision.Length];
+                        for (int cv = 0; cv < collision.Length; cv++) {
+                            path[cv] = (Vector2)(vertices[verticeTileIndex])+(collision[cv]*tilemap.tileSize);
+                        }
+                        collisionPaths.Add(path);
+                    }
                 }
 
                 int firstTriangleEdgeOfTile = (y * size_x + x) * 2 * 3;     // (tileRow * tileRowSize + tileInRow) * numTrianglesPerTile * numVerticesPerTriangle
@@ -104,10 +116,19 @@ public class TileLayer : MonoBehaviour {
         mesh.triangles = triangleVertices;
         mesh.normals = normals;
         mesh.uv = uv;
-
+        
         MeshFilter mesh_filter = GetComponent<MeshFilter>();
         MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-        MeshCollider mesh_collider = GetComponent<MeshCollider>();
+
+        PolygonCollider2D polygon_collider = GetComponent<PolygonCollider2D>();
+        polygon_collider.enabled = false;
+        polygon_collider.pathCount = collisionPaths.Count;
+        int pathnum = 0;
+        foreach(Vector2[] path in collisionPaths) {
+            polygon_collider.SetPath(pathnum, path);
+            pathnum++;
+        }
+        polygon_collider.enabled = true;
 
         mesh_filter.mesh = mesh;
     }

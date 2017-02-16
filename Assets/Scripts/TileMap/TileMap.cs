@@ -6,12 +6,12 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class TileMap : MonoBehaviour {
     Dictionary<string,GameObject> _layers = new Dictionary<string, GameObject>();
-
-    //List<Texture2D> tileTextures = new List<Texture2D>();
+    
     int textureResolution = 32;
 
     public Material material;
     public float tileSize = 0.01f;
+    public DMap map;
 
     int _lastgid = 0;
     public Dictionary<int, Color[]> tiles = new Dictionary<int, Color[]>();
@@ -43,7 +43,7 @@ public class TileMap : MonoBehaviour {
     }
 
     void LoadMap() {
-        DMap map = new DMap();
+        map = new DMap();
         
         foreach(DTileSet ts in map.tilesets) {
             LoadTileset(ts);
@@ -95,8 +95,7 @@ public class TileMap : MonoBehaviour {
             Debug.LogWarning("Tileset First GID is smaller than the last used GID");
         }
         _lastgid = ts.firstgid;
-
-        //int columns = tileset.width / textureResolution;
+        
         int numRows = tex.height / textureResolution;
 
         for (int id = 1; id <= ts.count; id++, _lastgid++) {
