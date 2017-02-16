@@ -53,7 +53,7 @@ public class TileMap : MonoBehaviour {
         float z = 0.0f;
         foreach(MapLayer l in map.layers) {
             LoadLayers(l, z);
-            z -= 0.01f;
+            z -= 0.1f;
         }
     }
 
