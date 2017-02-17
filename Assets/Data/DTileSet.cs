@@ -16,7 +16,7 @@ public class DTileSet {
         this.firstgid = firstgid;
     }
 
-    public void setTileFullCollision(int id, bool enable=true) {
+    public void setTileFullCollision(int id, bool enable=true, bool globalid=false) {
         List<Vector2> collisionbox = new List<Vector2>();
         if (enable) {
             collisionbox.Add(new Vector2(0f, 0f));
@@ -24,7 +24,7 @@ public class DTileSet {
             collisionbox.Add(new Vector2(1f, 1f));
             collisionbox.Add(new Vector2(1f, 0f));
         }
-        setCollisionForTile(id, new List<Vector2[]> { collisionbox.ToArray() });
+        setCollisionForTile(id, new List<Vector2[]> { collisionbox.ToArray() }, globalid);
     }
 
     public void setCollisionForTile(int id, List<Vector2[]> list, bool globalid=false) {
@@ -32,7 +32,7 @@ public class DTileSet {
         collisionboxes.Add(id, list);
     }
 
-    public List<Vector2[]> getCollisionForTile(int id, bool globalid=false) {
+    public List<Vector2[]> getCollisionForTile(int id, bool globalid=true) {
         if (globalid) id -= (firstgid-1);
         if (collisionboxes.ContainsKey(id)) {
             return collisionboxes[id];
