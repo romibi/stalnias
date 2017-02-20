@@ -32,7 +32,7 @@ public class TileLayer : MonoBehaviour {
 	}
     
     void generateLayerTexture() {
-        _layerTexture = new Texture2D(layerdata.width * textureResolution, layerdata.height * textureResolution);
+        _layerTexture = new Texture2D(layerdata.width * textureResolution, layerdata.height * textureResolution,TextureFormat.RGBA32,false); //to avoid some texture bugs disable mipmap for non NPOT textures
         Color transparent = new Color(0, 0, 0, 0);
         Color[] allColors = _layerTexture.GetPixels();
         for(int c=0;c<allColors.Length;c++) {
@@ -48,12 +48,13 @@ public class TileLayer : MonoBehaviour {
             }
         }
 
+        _layerTexture.wrapMode = TextureWrapMode.Clamp;
         _layerTexture.filterMode = FilterMode.Point;
         _layerTexture.Apply();
 
         MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-        mesh_renderer.materials = new Material[] { tilemap.material };
-        mesh_renderer.materials[0].mainTexture = _layerTexture;
+        mesh_renderer.sharedMaterials = new Material[] { new Material(tilemap.material) };
+        mesh_renderer.sharedMaterials[0].mainTexture = _layerTexture;
     }
 
     public void BuildMap() {
@@ -118,8 +119,7 @@ public class TileLayer : MonoBehaviour {
         mesh.uv = uv;
         
         MeshFilter mesh_filter = GetComponent<MeshFilter>();
-        MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-
+        
         PolygonCollider2D polygon_collider = GetComponent<PolygonCollider2D>();
         polygon_collider.enabled = false;
         polygon_collider.pathCount = collisionPaths.Count;

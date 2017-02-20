@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -32,11 +33,10 @@ public class TileMap : MonoBehaviour {
     }
 
     void ClearMap() {
-        Dictionary<string, GameObject> copy = new Dictionary<string, GameObject>(_layers);
-        foreach (KeyValuePair<string, GameObject> layer in copy) {
-            _layers.Remove(layer.Key);
-            layer.Value.transform.parent = null;
-            DestroyImmediate(layer.Value);
+        _layers.Clear();
+        var mapchilds = transform.Cast<Transform>().ToList();
+        foreach (var child in mapchilds) {
+            DestroyImmediate(child.gameObject);
         }
         _lastgid = 0;
         tiles.Clear();
@@ -74,7 +74,6 @@ public class TileMap : MonoBehaviour {
         tlcomp.layerdata = l;
 
         _layers.Add(l.name, tileLayer);
-
     }
 
     void LoadTileset(DTileSet ts) {
@@ -91,8 +90,8 @@ public class TileMap : MonoBehaviour {
             Debug.LogWarning("tileset resolution not equal to map resolution");
         }
 
-        if(_lastgid>=ts.firstgid) {
-            Debug.LogWarning("Tileset First GID is smaller than the last used GID");
+        if(_lastgid>ts.firstgid) {
+            Debug.LogWarning("Tileset First GID "+ts.firstgid+" is smaller than the last used GID "+_lastgid);
         }
         _lastgid = ts.firstgid;
         
