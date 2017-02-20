@@ -22,8 +22,13 @@ public class TileLayer : MonoBehaviour {
     // Use this for initialization
     void Start () {
         BuildMap();
-        generateLayerTexture();
-
+        if (tilemap.prerender_textures) {
+            generateLayerTexture();
+        } else {
+            MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
+            mesh_renderer.sharedMaterial = tilemap.material;
+            mesh_renderer.sharedMaterial.mainTexture = tilemap.mapTileset;
+        }
     }
 	
 	// Update is called once per frame
@@ -54,7 +59,7 @@ public class TileLayer : MonoBehaviour {
 
         MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
         mesh_renderer.sharedMaterials = new Material[] { new Material(tilemap.material) };
-        mesh_renderer.sharedMaterials[0].mainTexture = _layerTexture;
+        mesh_renderer.sharedMaterial.mainTexture = _layerTexture;
     }
 
     public void BuildMap() {
@@ -79,13 +84,19 @@ public class TileLayer : MonoBehaviour {
             for(int x=0; x < size_x; x++) {
                 if (layerdata.tileTypeIdAt(x, y) == 0) continue;
                 int verticeTileIndex = (y * size_x + x) * 4;
+                Vector2[] tileuv = new Vector2[0];
+                if(!tilemap.prerender_textures) { tileuv = tilemap.getUVForTileType(layerdata.tileTypeIdAt(x, y)); }
                 for (int v = 0; v < 4; v++) {
                     int vx = v%2;
                     int vy = v/2;
                     
                     vertices[verticeTileIndex + v] = new Vector3((x+vx) * tilemap.tileSize, (y+vy) * tilemap.tileSize);
                     normals[verticeTileIndex + v] = Vector3.forward;
-                    uv[verticeTileIndex + v] = new Vector2((float)(x+vx)/(layerdata.width), (float)(y + vy) / layerdata.height);
+                    if (tilemap.prerender_textures) {
+                        uv[verticeTileIndex + v] = new Vector2((float)(x + vx) / (layerdata.width), (float)(y + vy) / layerdata.height);
+                    } else {
+                        uv[verticeTileIndex + v] = tileuv[v];
+                    }
                 }
 
                 int tileId = layerdata.tileTypeIdAt(x, y);

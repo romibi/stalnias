@@ -6,13 +6,17 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 public class TileMap : MonoBehaviour {
+    public bool prerender_textures = false;
     Dictionary<string,GameObject> _layers = new Dictionary<string, GameObject>();
     
     int textureResolution = 32;
+    int tilesetTexturePadding = 1; // currently supported values: 0 and 1
 
     public Material material;
+    public Texture2D mapTileset;
     public float tileSize = 0.01f;
     public DMap map;
+    
 
     int _lastgid = 0;
     public Dictionary<int, Color[]> tiles = new Dictionary<int, Color[]>();
@@ -47,6 +51,10 @@ public class TileMap : MonoBehaviour {
         
         foreach(DTileSet ts in map.tilesets) {
             LoadTileset(ts);
+        }
+
+        if(!prerender_textures) {
+            PrepareTileset();
         }
 
 
@@ -105,5 +113,66 @@ public class TileMap : MonoBehaviour {
             
             tiles.Add(_lastgid, tex.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
         }
+    }
+
+    void PrepareTileset() {
+        int resWithPad = textureResolution + (2 * tilesetTexturePadding);
+        int tilesetwidth = Mathf.CeilToInt(Mathf.Sqrt(_lastgid));
+        int texturesize = Mathf.NextPowerOfTwo(tilesetwidth * resWithPad);
+        mapTileset = new Texture2D(texturesize, texturesize, TextureFormat.RGBA32, false);
+        
+        for (int tile = 0; tile < _lastgid; tile++) {
+            int x = tile % tilesetwidth;
+            int y = tile / tilesetwidth;
+            if (tiles.ContainsKey(tile)) {
+                mapTileset.SetPixels((x * resWithPad)+tilesetTexturePadding, (y * resWithPad)+tilesetTexturePadding, textureResolution, textureResolution, tiles[tile]);
+
+                if (tilesetTexturePadding != 0) {
+                    Color[] bottom = mapTileset.GetPixels(x * resWithPad + tilesetTexturePadding, y * resWithPad + tilesetTexturePadding, textureResolution, tilesetTexturePadding);
+                    Color[] top = mapTileset.GetPixels(x * resWithPad + tilesetTexturePadding, y * resWithPad + textureResolution, textureResolution, tilesetTexturePadding);
+                    Color[] left = mapTileset.GetPixels((x * resWithPad) + tilesetTexturePadding, (y * resWithPad) + tilesetTexturePadding, tilesetTexturePadding, textureResolution);
+                    Color[] right = mapTileset.GetPixels((x * resWithPad) + textureResolution, (y * resWithPad) + tilesetTexturePadding, tilesetTexturePadding, textureResolution);
+
+                    Color[] bottomLeft = mapTileset.GetPixels(x * resWithPad + tilesetTexturePadding, y * resWithPad + tilesetTexturePadding, tilesetTexturePadding, tilesetTexturePadding);
+                    Color[] topLeft = mapTileset.GetPixels(x * resWithPad + tilesetTexturePadding, y * resWithPad + textureResolution, tilesetTexturePadding, tilesetTexturePadding);
+                    Color[] bottomRight = mapTileset.GetPixels((x * resWithPad) + textureResolution, (y * resWithPad) + tilesetTexturePadding, tilesetTexturePadding, tilesetTexturePadding);
+                    Color[] topRight = mapTileset.GetPixels((x * resWithPad) + textureResolution, (y * resWithPad) + textureResolution, tilesetTexturePadding, tilesetTexturePadding);
+
+                    mapTileset.SetPixels(x * resWithPad + tilesetTexturePadding, y * resWithPad, textureResolution, tilesetTexturePadding, bottom);
+                    mapTileset.SetPixels(x * resWithPad + tilesetTexturePadding, y * resWithPad + tilesetTexturePadding + textureResolution, textureResolution, tilesetTexturePadding, top);
+                    mapTileset.SetPixels(x * resWithPad, y * resWithPad + tilesetTexturePadding, tilesetTexturePadding, textureResolution, left);
+                    mapTileset.SetPixels(x * resWithPad + tilesetTexturePadding + textureResolution, y * resWithPad + tilesetTexturePadding, tilesetTexturePadding, textureResolution, right);
+
+                    mapTileset.SetPixels(x * resWithPad, y * resWithPad, tilesetTexturePadding,tilesetTexturePadding,bottomLeft);
+                    mapTileset.SetPixels(x * resWithPad+textureResolution+tilesetTexturePadding, y * resWithPad, tilesetTexturePadding, tilesetTexturePadding, bottomRight);
+                    mapTileset.SetPixels(x * resWithPad, y * resWithPad + textureResolution + tilesetTexturePadding, tilesetTexturePadding, tilesetTexturePadding, topLeft);
+                    mapTileset.SetPixels(x * resWithPad + textureResolution + tilesetTexturePadding, y * resWithPad + textureResolution + tilesetTexturePadding, tilesetTexturePadding, tilesetTexturePadding, topRight);
+                }
+            }
+        }
+
+        mapTileset.wrapMode = TextureWrapMode.Clamp;
+        mapTileset.filterMode = FilterMode.Point;
+        mapTileset.Apply();
+        material.mainTexture = mapTileset;
+    }
+
+    public Vector2[] getUVForTileType(int id) {
+        int usedtilesetcolumns = Mathf.CeilToInt(Mathf.Sqrt(_lastgid));
+        int paddedTileRes = textureResolution + (2 * tilesetTexturePadding);
+        float realtilesetcolumns = mapTileset.width / paddedTileRes;
+        realtilesetcolumns += (float)(mapTileset.width-(usedtilesetcolumns * paddedTileRes))/paddedTileRes;
+
+        float paddingProcent = (float)tilesetTexturePadding / mapTileset.width;
+        //paddingProcent = 0; // to debug tileset padding generation
+
+        int x = id % usedtilesetcolumns;
+        int y = id / usedtilesetcolumns;
+        Vector2[] uv = new Vector2[4];
+        uv[0] = new Vector2(((float)x / realtilesetcolumns)+paddingProcent, ((float)y / realtilesetcolumns)+paddingProcent);
+        uv[1] = new Vector2(((float)(x + 1) / realtilesetcolumns)-paddingProcent, ((float)y / realtilesetcolumns) + paddingProcent);
+        uv[2] = new Vector2(((float)x / realtilesetcolumns) + paddingProcent, ((float)(y + 1) / realtilesetcolumns)-paddingProcent);
+        uv[3] = new Vector2(((float)(x + 1) / realtilesetcolumns) - paddingProcent, ((float)(y + 1) / realtilesetcolumns)- paddingProcent);
+        return uv;
     }
 }
