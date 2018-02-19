@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
+using UnityEngine;
 
 public class DTileSet {
     //string name;
@@ -8,21 +8,81 @@ public class DTileSet {
     public int count;
     public int firstgid = 1;
     public string res_name;
-    public Dictionary<int,List<Vector2[]>> collisionboxes= new Dictionary<int, List<Vector2[]>>();
+    public Dictionary<int, List<Vector2[]>> collisionboxes = new Dictionary<int, List<Vector2[]>>();
+    private int tileresolution = 32;
 
-    public DTileSet(string res_name, int columns, int count, int firstgid=1) {
+    public DTileSet(string res_name, int columns, int count, int firstgid = 1) {
         this.res_name = res_name;
         this.columns = columns;
         this.count = count;
         this.firstgid = firstgid;
     }
 
-    public DTileSet(XmlNode tilesetTag)
+    public DTileSet(XmlNode tilesetTag, int tileresolution)
     {
         res_name = tilesetTag.Attributes["name"].Value; // TODO: probably need to use child img source
         int.TryParse(tilesetTag.Attributes["columns"].Value, out columns);
         int.TryParse(tilesetTag.Attributes["tilecount"].Value, out count);
         int.TryParse(tilesetTag.Attributes["firstgid"].Value, out firstgid);
+        this.tileresolution = tileresolution;
+        foreach (XmlNode childNode in tilesetTag.ChildNodes)
+        {
+            switch (childNode.Name)
+            {
+                case "image":
+                    //TODO: get correct image path
+                    break;
+                case "tile":
+                    parseTileInfo(childNode);
+                    break;
+            }
+        }
+    }
+
+    private void parseTileInfo(XmlNode tileTag)
+    {
+        int id = -1;
+        int.TryParse(tileTag.Attributes["id"].Value, out id);
+        if (id == -1) return;
+        id++;
+        XmlNode objectGroupTag = tileTag.FirstChild;
+        if (objectGroupTag.Name != "objectgroup") return;
+        List<Vector2[]> colisionboxesToAdd = new List<Vector2[]>();
+        foreach (XmlNode objectTag in objectGroupTag.ChildNodes)
+        {
+            if (objectTag.Name != "object") continue;
+            float xoff = 0f;
+            float yoff = 0f;
+            float.TryParse(objectTag.Attributes["x"].Value, out xoff);
+            float.TryParse(objectTag.Attributes["y"].Value, out yoff);
+            
+            foreach (XmlNode polygon in objectTag)
+            {
+                List<Vector2> collisionbox = new List<Vector2>();
+                if (polygon.Name != "polygon") continue;
+                string pointlist = polygon.Attributes["points"].Value;
+                string[] points = pointlist.Split(' ');
+                foreach (string point in points)
+                {
+                    string[] xy = point.Split(',');
+                    string xstr = xy[0];
+                    string ystr = xy[1];
+                    float x = 0f;
+                    float y = 0f;
+                    float.TryParse(xstr, out x);
+                    float.TryParse(ystr, out y);
+
+                    x = (x+xoff) / tileresolution;
+                    y = (y+yoff) / tileresolution;
+
+                    y = 1f - y;
+                    
+                    collisionbox.Add(new Vector2(x,y));
+                }
+                colisionboxesToAdd.Add(collisionbox.ToArray());
+            }
+        }
+        setCollisionForTile(id, colisionboxesToAdd);
     }
 
     public void setTileFullCollision(int id, bool enable=true, bool globalid=false) {

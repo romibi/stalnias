@@ -1,11 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="32" tileheight="32" nextobjectid="12">
-	<tileset tileheight="32" tilewidth="32" columns="3" tilecount="18" name="grass" firstgid="1">
-	</tileset>
-	<tileset tileheight="32" tilewidth="32" columns="3" tilecount="18" name="watergrass" firstgid="19">
-	</tileset>
-	<layer height="10" width="20" name="bg">
-		<data encoding="csv">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="32" tileheight="32" infinite="0" nextobjectid="12">
+ <tileset firstgid="1" name="grass" tilewidth="32" tileheight="32" tilecount="18" columns="3">
+  <image source="../textures/grass.png" width="96" height="192"/>
+ </tileset>
+ <tileset firstgid="19" name="watergrass" tilewidth="32" tileheight="32" tilecount="18" columns="3">
+  <image source="../textures/watergrass.png" width="96" height="192"/>
+  <tile id="1">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,0 32,0 32,16 16,16 16,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="2">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,16 0,0 32,0 32,32 16,32 16,16"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="4">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,0 16,0 16,16 32,16 32,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="5">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,16 16,16 16,0 32,0 32,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="6">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="16,32 19.2,19.2 32,16 32,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="7">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,16 32,16 32,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="8">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,16 12.8,19.2 16,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="9">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="16,32 16,0 32,0 32,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="10">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,0 32,0 32,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="11">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,32 0,0 16,0 16,32"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="12">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="19.2,12.8 16,0 32,0 32,16"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="13">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,16 0,0 32,0 32,16"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="14">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0">
+     <polygon points="0,16 0,0 16,0 12.8,12.8"/>
+    </object>
+   </objectgroup>
+  </tile>
+ </tileset>
+ <layer name="bg" width="20" height="10">
+  <data encoding="csv">
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
@@ -16,10 +109,10 @@
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
-		</data>
-	</layer>
-	<layer height="10" width="20" name="something">
-		<data encoding="csv">
+</data>
+ </layer>
+ <layer name="something" width="20" height="10">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -30,7 +123,7 @@
 0,0,0,0,0,0,31,32,33,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		</data>
-	</layer>
-	<objectgroup name="Living"></objectgroup>
+</data>
+ </layer>
+ <objectgroup name="Living"/>
 </map>
