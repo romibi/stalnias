@@ -109,10 +109,15 @@ public class DMap {
         if (!File.Exists(filePath))
             filePath = Application.persistentDataPath + "/levels/" + mapId + ".xml";
         if (!File.Exists(filePath))
-            filePath = Application.dataPath + "/StreamingAssets/levels/" + mapId + ".tmx";
+            filePath = Application.streamingAssetsPath + "/levels/" + mapId + ".tmx";
         if (!File.Exists(filePath))
-            filePath = Application.dataPath + "/StreamingAssets/levels/" + mapId + ".xml";
-        levelFileContent = File.ReadAllText(filePath);
+            filePath = Application.streamingAssetsPath + "/levels/" + mapId + ".xml";
+
+        if (File.Exists(filePath))
+            levelFileContent = File.ReadAllText(filePath);
+        else
+            levelFileContent = (Resources.Load("levels/" + mapId) as TextAsset).text;
+
         XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.LoadXml(levelFileContent);
         return xmlDoc;

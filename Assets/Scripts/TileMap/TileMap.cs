@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -93,7 +94,8 @@ public class TileMap : MonoBehaviour {
             tiles.Add(0, emptytile);
         }
 
-        Texture2D tex = Resources.Load("textures/" + ts.res_name) as Texture2D;
+        Texture2D tex = loadTexture(ts.res_name);
+
         if (textureResolution != (tex.width / ts.columns)) {
             Debug.LogWarning("tileset resolution not equal to map resolution");
         }
@@ -113,6 +115,20 @@ public class TileMap : MonoBehaviour {
             
             tiles.Add(_lastgid, tex.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
         }
+    }
+
+    private Texture2D loadTexture(string res_name)
+    {
+        String filePath = Application.persistentDataPath + "/textures/" + res_name + ".png";
+        if (!File.Exists(filePath))
+            filePath = Application.persistentDataPath + "/textures/" + res_name + ".jpg";
+        if (!File.Exists(filePath))
+            filePath = Application.streamingAssetsPath + "/textures/" + res_name + ".png";
+        if (!File.Exists(filePath))
+            filePath = Application.streamingAssetsPath+ "/textures/" + res_name + ".jpg";
+        if(File.Exists(filePath))
+            return new WWW("file:///" + filePath).texture;
+        return Resources.Load("textures/" + res_name) as Texture2D;
     }
 
     void PrepareTileset() {
