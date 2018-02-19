@@ -10,7 +10,7 @@ The Game Code will be Open Source as well as some Demo Content. Everything else 
 	- [x] Textures only
 		- [x] generate mesh(-es) (hard coded)
 		- [x] map generating from data objects
-		- [ ] map loading from db/file (Database Support needed ↓)
+		- [x] map loading from file (See more below ↓)
 	- [x] Collision Boxes generating
 	- [ ] …
 - [ ] Player
@@ -18,19 +18,17 @@ The Game Code will be Open Source as well as some Demo Content. Everything else 
 	- [x] animation
 	- [ ] …
 - [ ] Database Support (not finally decided yet what exactly)
-	- [ ] Offline Mode: sqlite (does probably not work in WebGL)
-		- [ ] check if exists/supported
-		- [ ] connect & read support
+	- [ ] Offline Mode: files (does it work in WebGL?)
+		- [x] load map from tmx & images
+		- [ ] level select
+		- [ ] teleport to different map
 		- [ ] write support
-	- [ ] Online Mode: mysql/postgresql (perhaps abstract behind REST?)
+		- [ ] update from online
+	- [ ] Online Mode: REST update service (with mysql/postgresql in php? node?)
 		- [ ] check if configured/supported
-		- [ ] connect & read support
-		- [ ] write support
-		- [ ] caching to local sqlite
-	- [ ] For WebGL: json files + playerprefs(?)
-		- [ ] Load from HTTP(S)/REST (online, for a start read-only)
-		- [ ] Load from Assets (offline, read-only)
-		- [ ] savegame in playerprefs
+		- [ ] connect & load to local
+		- [ ] write support (login? how?)
+	- [ ] savegame in playerprefs ?
 - [ ] Objects and NPCs
 	- [ ] 1 Tile sized objects
 	- [ ] multi Tile sized objects
