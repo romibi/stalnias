@@ -94,7 +94,9 @@ public class TileMap : MonoBehaviour {
             tiles.Add(0, emptytile);
         }
 
-        Texture2D tex = loadTexture(ts.res_name);
+        Texture2D tex = loadTextureFromPath(ts.res_path);
+        if (tex == null)
+            tex = loadTextureFromName(ts.res_name);
 
         if (textureResolution != (tex.width / ts.columns)) {
             Debug.LogWarning("tileset resolution not equal to map resolution");
@@ -117,7 +119,7 @@ public class TileMap : MonoBehaviour {
         }
     }
 
-    private Texture2D loadTexture(string res_name)
+    private Texture2D loadTextureFromName(string res_name)
     {
         String filePath = Application.persistentDataPath + "/textures/" + res_name + ".png";
         if (!File.Exists(filePath))
@@ -125,10 +127,20 @@ public class TileMap : MonoBehaviour {
         if (!File.Exists(filePath))
             filePath = Application.streamingAssetsPath + "/textures/" + res_name + ".png";
         if (!File.Exists(filePath))
-            filePath = Application.streamingAssetsPath+ "/textures/" + res_name + ".jpg";
-        if(File.Exists(filePath))
+            filePath = Application.streamingAssetsPath + "/textures/" + res_name + ".jpg";
+        if (File.Exists(filePath))
             return new WWW("file:///" + filePath).texture;
         return Resources.Load("textures/" + res_name) as Texture2D;
+    }
+
+    private Texture2D loadTextureFromPath(string res_path)
+    {
+        String filePath = Application.persistentDataPath + res_path;
+        if (!File.Exists(filePath))
+            filePath = Application.streamingAssetsPath+ res_path;
+        if(File.Exists(filePath))
+            return new WWW("file:///" + filePath).texture;
+        return Resources.Load(res_path.TrimStart('/')) as Texture2D;
     }
 
     void PrepareTileset() {

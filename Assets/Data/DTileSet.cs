@@ -7,7 +7,8 @@ public class DTileSet {
     public int columns;
     public int count;
     public int firstgid = 1;
-    public string res_name;
+    public string res_name; // fallback to path
+    public string res_path;
     public Dictionary<int, List<Vector2[]>> collisionboxes = new Dictionary<int, List<Vector2[]>>();
     private int tileresolution = 32;
 
@@ -30,7 +31,7 @@ public class DTileSet {
             switch (childNode.Name)
             {
                 case "image":
-                    //TODO: get correct image path
+                    parseImageNode(childNode);
                     break;
                 case "tile":
                     parseTileInfo(childNode);
@@ -83,6 +84,15 @@ public class DTileSet {
             }
         }
         setCollisionForTile(id, colisionboxesToAdd);
+    }
+
+    private void parseImageNode(XmlNode imageTag)
+    {
+        string source = imageTag.Attributes["source"].Value;
+        res_path = source;
+        string[] pathParts = source.Replace("../textures/", "↑").Split('↑');
+        if (pathParts.Length == 2)
+            res_path = "/textures/" + pathParts[1];
     }
 
     public void setTileFullCollision(int id, bool enable=true, bool globalid=false) {
