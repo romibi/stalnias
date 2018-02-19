@@ -1,19 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Xml;
 
 public class DTileSet {
     //string name;
     public int columns;
     public int count;
-    public int firstgid;
+    public int firstgid = 1;
     public string res_name;
     public Dictionary<int,List<Vector2[]>> collisionboxes= new Dictionary<int, List<Vector2[]>>();
-    
+
     public DTileSet(string res_name, int columns, int count, int firstgid=1) {
         this.res_name = res_name;
         this.columns = columns;
         this.count = count;
         this.firstgid = firstgid;
+    }
+
+    public DTileSet(XmlNode tilesetTag)
+    {
+        res_name = tilesetTag.Attributes["name"].Value; // TODO: probably need to use child img source
+        int.TryParse(tilesetTag.Attributes["columns"].Value, out columns);
+        int.TryParse(tilesetTag.Attributes["tilecount"].Value, out count);
+        int.TryParse(tilesetTag.Attributes["firstgid"].Value, out firstgid);
     }
 
     public void setTileFullCollision(int id, bool enable=true, bool globalid=false) {

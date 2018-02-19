@@ -46,8 +46,8 @@ public class TileMap : MonoBehaviour {
         tiles.Clear();
     }
 
-    void LoadMap() {
-        map = new DMap();
+    void LoadMap(String mapId="demoMap") {
+        map = new DMap(mapId);
         
         foreach(DTileSet ts in map.tilesets) {
             LoadTileset(ts);
