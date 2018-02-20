@@ -188,8 +188,7 @@ public class TileMap : MonoBehaviour {
     public Vector2[] getUVForTileType(int id) {
         int usedtilesetcolumns = Mathf.CeilToInt(Mathf.Sqrt(_lastgid));
         int paddedTileRes = textureResolution + (2 * tilesetTexturePadding);
-        float realtilesetcolumns = mapTileset.width / paddedTileRes;
-        realtilesetcolumns += (float)(mapTileset.width-(usedtilesetcolumns * paddedTileRes))/paddedTileRes;
+        float realtilesetcolumns = ((float)mapTileset.width) / paddedTileRes;
 
         float paddingProcent = (float)tilesetTexturePadding / mapTileset.width;
         //paddingProcent = 0; // to debug tileset padding generation
