@@ -9,8 +9,9 @@ using UnityEngine;
 public class TileMap : MonoBehaviour {
     public bool prerender_textures = false;
     Dictionary<string,GameObject> _layers = new Dictionary<string, GameObject>();
-    
-    int textureResolution = 32;
+    Dictionary<string, GameObject> _objects = new Dictionary<string, GameObject>();
+
+    public int textureResolution = 32;
     int tilesetTexturePadding = 1; // currently supported values: 0 and 1
 
     public Material material;
@@ -65,9 +66,29 @@ public class TileMap : MonoBehaviour {
                 LoadLayers((DMapLayerTiles)l, z);
             }
             if(l.GetType() == typeof(DMapLayerObjects)) {
-                if(l.name=="Living") {
+                DMapLayerObjects ol = (DMapLayerObjects)l;
+                GameObject layerobject = GetObjectLayer(ol, z);
+                if (l.name=="Living") {
+                    DObject dPlayer = ol.objectsByName["Player"];
+                    
                     GameObject player = GameObject.FindGameObjectWithTag("Player");
-                    player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, z);
+                    float newX = player.transform.position.x;
+                    float newY = player.transform.position.y;
+                    if(dPlayer!=null)
+                    {
+                        Vector2 newPos = MapObjCenterInUPos(dPlayer);
+                        newX = newPos.x;
+                        newY = newPos.y;
+                    }
+
+                    player.transform.position = new Vector3(newX, newY, z);
+                }
+                foreach(DObject obj in ol.objectsById.Values)
+                {
+                    if (obj.name == "Player")
+                        continue;
+
+                    LoadObject(obj, layerobject);
                 }
             }
             z -= 0.1f;
@@ -83,6 +104,31 @@ public class TileMap : MonoBehaviour {
         tlcomp.layerdata = l;
 
         _layers.Add(l.name, tileLayer);
+    }
+
+    GameObject GetObjectLayer(DMapLayerObjects l, float z)
+    {
+        GameObject olayer = new GameObject(l.name);
+        olayer.hideFlags = HideFlags.DontSave;
+        olayer.transform.parent = this.transform;
+        return olayer;
+    }
+
+    void LoadObject(DObject o, GameObject parent)
+    {
+        GameObject ingameObject = new GameObject(o.name, typeof(IngameObject));
+        ingameObject.hideFlags = HideFlags.DontSave;
+        ingameObject.transform.parent = parent.transform;
+        Vector2 v = MapPosToUPos(o.x, o.y);
+        float scaleX = o.w / textureResolution;
+        float scaleY = o.h / textureResolution;
+
+        ingameObject.transform.position = ingameObject.transform.position + new Vector3(v.x, v.y, 0);
+        ingameObject.transform.localScale = new Vector3(scaleX, scaleY, 1);
+        IngameObject incomp = ingameObject.GetComponent<IngameObject>();
+        incomp.objectData = o;
+
+        _objects.Add(o.name, ingameObject);
     }
 
     void LoadTileset(DTileSet ts) {
@@ -201,5 +247,22 @@ public class TileMap : MonoBehaviour {
         uv[2] = new Vector2(((float)x / realtilesetcolumns) + paddingProcent, ((float)(y + 1) / realtilesetcolumns)-paddingProcent);
         uv[3] = new Vector2(((float)(x + 1) / realtilesetcolumns) - paddingProcent, ((float)(y + 1) / realtilesetcolumns)- paddingProcent);
         return uv;
+    }
+
+    public Vector2 MapPosToUPos(float x, float y)
+    {
+        float newX = x * tileSize / textureResolution;
+        float newY = (map.height * textureResolution - y) * tileSize / textureResolution;
+        return new Vector2(newX, newY);
+    }
+
+    public Vector2 MapObjCenterInUPos(DObject obj)
+    {
+        Vector2 pos = MapPosToUPos(obj.x, obj.y);
+        float width = obj.w * tileSize / textureResolution;
+        float height = obj.h * tileSize / textureResolution;
+        pos.x += width / 2;
+        pos.y -= height / 2;
+        return pos;
     }
 }

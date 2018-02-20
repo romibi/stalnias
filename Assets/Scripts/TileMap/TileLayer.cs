@@ -15,8 +15,12 @@ public class TileLayer : MonoBehaviour {
             return transform.parent.GetComponent<TileMap>();
         }
     }
-    
-    public int textureResolution = 32;
+
+    int textureResolution {
+        get {
+            return tilemap.textureResolution;
+        }
+    }
 
     public DMapLayerTiles layerdata;
 
