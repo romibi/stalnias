@@ -53,7 +53,7 @@ public class DMap {
 
     public DTileSet getTilesetForId(int id) {
         foreach (DTileSet set in tilesets) {
-            if (set.firstgid < id && set.firstgid + set.count >= id) {
+            if (set.firstgid <= id && set.firstgid + set.count > id) {
                 return set;
             }
         }
