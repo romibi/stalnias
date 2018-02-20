@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 
@@ -56,34 +57,84 @@ public class DTileSet {
             float yoff = 0f;
             float.TryParse(objectTag.Attributes["x"].Value, out xoff);
             float.TryParse(objectTag.Attributes["y"].Value, out yoff);
-            
-            foreach (XmlNode polygon in objectTag)
+
+            foreach (XmlNode objectElement in objectTag.ChildNodes)
             {
-                List<Vector2> collisionbox = new List<Vector2>();
-                if (polygon.Name != "polygon") continue;
-                string pointlist = polygon.Attributes["points"].Value;
-                string[] points = pointlist.Split(' ');
-                foreach (string point in points)
+                Vector2[] collisionbox = null;
+                switch (objectElement.Name)
                 {
-                    string[] xy = point.Split(',');
-                    string xstr = xy[0];
-                    string ystr = xy[1];
-                    float x = 0f;
-                    float y = 0f;
-                    float.TryParse(xstr, out x);
-                    float.TryParse(ystr, out y);
-
-                    x = (x+xoff) / tileresolution;
-                    y = (y+yoff) / tileresolution;
-
-                    y = 1f - y;
-                    
-                    collisionbox.Add(new Vector2(x,y));
+                    case "polygon":
+                         collisionbox = parsePolygonTag(objectElement, xoff, yoff);
+                        break;
+                    case "bolyline":
+                        collisionbox = parsePolygonTag(objectElement, xoff, yoff); //TODO: handle collisionbox for lines different
+                        break;
+                    case "ellipse":
+                        collisionbox = parseEllipse(objectTag);
+                        break;
                 }
-                colisionboxesToAdd.Add(collisionbox.ToArray());
+                
+                if(collisionbox!=null)
+                    colisionboxesToAdd.Add(collisionbox);
             }
+
+            if (objectTag.ChildNodes.Count == 0)
+                colisionboxesToAdd.Add(parseRectangle(objectTag));
         }
         setCollisionForTile(id, colisionboxesToAdd);
+    }
+
+    private Vector2[] parseEllipse(XmlNode objectTag)
+    {
+        return parseRectangle(objectTag); // TODO: handle ellipse better
+    }
+
+    private Vector2[] parseRectangle(XmlNode objectTag)
+    {
+        float xoff = 0f;
+        float yoff = 0f;
+        float.TryParse(objectTag.Attributes["x"].Value, out xoff);
+        float.TryParse(objectTag.Attributes["y"].Value, out yoff);
+
+        float objwidth = 0f;
+        float objheight = 0f;
+        float.TryParse(objectTag.Attributes["width"].Value, out objwidth);
+        float.TryParse(objectTag.Attributes["height"].Value, out objheight);
+
+        objwidth /= tileresolution;
+        objheight /= tileresolution;
+        xoff /= tileresolution;
+        yoff /= tileresolution;
+        yoff = 1f - yoff;
+        objheight = -objheight;
+        
+        return new Vector2[] { new Vector2(xoff, yoff + objheight), new Vector2(xoff, yoff), new Vector2(xoff + objwidth, yoff), new Vector2(xoff + objwidth, yoff + objheight)};
+    }
+
+    private Vector2[] parsePolygonTag(XmlNode polygon, float xoff, float yoff)
+    {
+        List<Vector2> collisionbox = new List<Vector2>();
+        if (polygon.Name != "polygon") return null;
+        string pointlist = polygon.Attributes["points"].Value;
+        string[] points = pointlist.Split(' ');
+        foreach (string point in points)
+        {
+            string[] xy = point.Split(',');
+            string xstr = xy[0];
+            string ystr = xy[1];
+            float x = 0f;
+            float y = 0f;
+            float.TryParse(xstr, out x);
+            float.TryParse(ystr, out y);
+
+            x = (x + xoff) / tileresolution;
+            y = (y + yoff) / tileresolution;
+
+            y = 1f - y;
+
+            collisionbox.Add(new Vector2(x, y));
+        }
+        return collisionbox.ToArray();
     }
 
     private void parseImageNode(XmlNode imageTag)
