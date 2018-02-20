@@ -5,16 +5,7 @@ using System.Xml;
 
 public class DMapLayerTiles : DMapLayer {
     int[] tilearray;
-    public DMapLayerTiles(string name, int width, int height, int[] tilearray) : base(name, width, height) {
-        this.tilearray = tilearray;
-    }
-
-    public DMapLayerTiles(XmlNode tileLayerTag) : 
-        base(
-            tileLayerTag.Attributes["name"].Value,
-            int.Parse(tileLayerTag.Attributes["width"].Value),
-            int.Parse(tileLayerTag.Attributes["height"].Value)
-        )
+    public DMapLayerTiles(XmlNode tileLayerTag) : base(tileLayerTag)
     {
         String layerdataCSV = tileLayerTag.FirstChild.InnerText;
         tilearray = StringToIntList(layerdataCSV).Cast<int>().ToArray();

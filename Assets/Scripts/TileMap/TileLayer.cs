@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ public class TileLayer : MonoBehaviour {
             MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
             mesh_renderer.sharedMaterial = tilemap.material;
             mesh_renderer.sharedMaterial.mainTexture = tilemap.mapTileset;
+            if (!layerdata.visible) mesh_renderer.enabled = false;
         }
     }
 	
@@ -48,7 +50,13 @@ public class TileLayer : MonoBehaviour {
         for (int y=0; y < layerdata.height; y++) {
             for(int x=0; x < layerdata.width; x++) {
                 if (layerdata.tileTypeIdAt(x, y) != 0) {
-                    _layerTexture.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, tilemap.tiles[layerdata.tileTypeIdAt(x, y)]);
+                    Color[] colors = tilemap.tiles[layerdata.tileTypeIdAt(x, y)];
+                    if (layerdata.opacity < 1) {
+                        Color[] colorsCopy = new Color[colors.Length];
+                        Array.Copy(colors, colorsCopy, colors.Length);
+                        colors = applyOpacityToColors(colorsCopy, layerdata.opacity);
+                    }
+                    _layerTexture.SetPixels(x * textureResolution, y * textureResolution, textureResolution, textureResolution, colors);
                 }
             }
         }
@@ -60,6 +68,14 @@ public class TileLayer : MonoBehaviour {
         MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
         mesh_renderer.sharedMaterials = new Material[] { new Material(tilemap.material) };
         mesh_renderer.sharedMaterial.mainTexture = _layerTexture;
+        if (!layerdata.visible) mesh_renderer.enabled = false;
+    }
+
+    private Color[] applyOpacityToColors(Color[] colors, float opacity)
+    {
+        for(int key = 0; key<colors.Length; key++)
+            colors[key].a = colors[key].a * opacity;
+        return colors;
     }
 
     public void BuildMap() {
@@ -139,7 +155,7 @@ public class TileLayer : MonoBehaviour {
             polygon_collider.SetPath(pathnum, path);
             pathnum++;
         }
-        polygon_collider.enabled = true;
+        polygon_collider.enabled = layerdata.visible;
 
         mesh_filter.mesh = mesh;
     }
