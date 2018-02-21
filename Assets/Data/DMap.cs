@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Xml;
+using System.Collections;
+using System.Threading;
 
 public class DMap {
     public int width = 20;
@@ -12,8 +14,7 @@ public class DMap {
     public List<DTileSet> tilesets;
     public List<DMapLayer> layers;
 
-    public DMap(string mapId) {
-        XmlDocument mapData = loadMapData(mapId);
+    public DMap(XmlDocument mapData) {
         XmlNode mapTag = mapData.GetElementsByTagName("map")[0];
 
         int.TryParse(mapTag.Attributes["width"].Value, out width);
@@ -58,26 +59,5 @@ public class DMap {
             }
         }
         return null;
-    }
-
-    private XmlDocument loadMapData(String mapId)
-    {
-        String levelFileContent = "";
-        String filePath = Application.persistentDataPath + "/levels/" + mapId + ".tmx";
-        if (!File.Exists(filePath))
-            filePath = Application.persistentDataPath + "/levels/" + mapId + ".xml";
-        if (!File.Exists(filePath))
-            filePath = Application.streamingAssetsPath + "/levels/" + mapId + ".tmx";
-        if (!File.Exists(filePath))
-            filePath = Application.streamingAssetsPath + "/levels/" + mapId + ".xml";
-
-        if (File.Exists(filePath))
-            levelFileContent = File.ReadAllText(filePath);
-        else
-            levelFileContent = (Resources.Load("levels/" + mapId) as TextAsset).text;
-
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.LoadXml(levelFileContent);
-        return xmlDoc;
     }
 }

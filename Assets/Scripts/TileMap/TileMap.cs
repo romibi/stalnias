@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Xml;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -23,33 +25,59 @@ public class TileMap : MonoBehaviour {
     int _lastgid = 0;
     public Dictionary<int, Color[]> tiles = new Dictionary<int, Color[]>();
 
+    AssetLoader _maploader = new AssetLoader();
+
     // Use this for initialization
     void Start() {
-        LoadMap();
+        RequestMap();
     }
 
     // Update is called once per frame
     void Update() {
-
+        if(_maploader.MapFinished())
+            LoadMap();
     }
 
-    public void reloadLayers() {
-        ClearMap();
-        LoadMap();
-    }
-
-    void ClearMap() {
+    public void ClearMap() {
         _layers.Clear();
-        var mapchilds = transform.Cast<Transform>().ToList();
-        foreach (var child in mapchilds) {
-            DestroyImmediate(child.gameObject);
+        _objects.Clear();
+        _maploader = new AssetLoader();
+        if (this != null && this.transform !=null)
+        {
+            var mapchilds = transform.Cast<Transform>().ToList();
+            foreach (var child in mapchilds)
+            {
+                DestroyImmediate(child.gameObject);
+            }
         }
         _lastgid = 0;
         tiles.Clear();
     }
 
-    void LoadMap(String mapId="demoMap") {
-        map = new DMap(mapId);
+    void RequestMap(String mapId = "demoMap")
+    {
+        StartCoroutine(_maploader.loadMapData(mapId));
+    }
+
+    public IEnumerator EditorRequestMap(String mapId = "demoMap")
+    {
+        ClearMap();
+        return _maploader.loadMapData(mapId);
+    }
+
+    public void EditorLoadMap()
+    {
+        LoadMap();
+    }
+
+    public bool EditorRequestOngoing()
+    {
+        return !_maploader.MapFinished();
+    }
+
+    void LoadMap(DMap _map = null) {
+        if(_map==null)
+            map = _maploader.MapData;
         
         foreach(DTileSet ts in map.tilesets) {
             LoadTileset(ts);
@@ -99,6 +127,8 @@ public class TileMap : MonoBehaviour {
     }
 
     void LoadLayers(DMapLayerTiles l, float z) {
+        if (this.transform == null)
+            return;
         GameObject tileLayer = new GameObject(l.name, typeof(TileLayer));
         tileLayer.hideFlags = HideFlags.DontSave;
         tileLayer.transform.parent = this.transform;
@@ -111,6 +141,8 @@ public class TileMap : MonoBehaviour {
 
     GameObject GetObjectLayer(DMapLayerObjects l, float z)
     {
+        if (this.transform == null)
+            return null;
         GameObject olayer = new GameObject(l.name);
         olayer.hideFlags = HideFlags.DontSave;
         olayer.transform.parent = this.transform;
@@ -120,6 +152,8 @@ public class TileMap : MonoBehaviour {
 
     void LoadObject(DObject o, GameObject parent)
     {
+        if (parent == null)
+            return;
         GameObject ingameObject = new GameObject(o.name, typeof(IngameObject));
         ingameObject.hideFlags = HideFlags.DontSave;
         ingameObject.transform.parent = parent.transform;
@@ -129,6 +163,7 @@ public class TileMap : MonoBehaviour {
 
         ingameObject.transform.position = ingameObject.transform.position + new Vector3(v.x, v.y, 0);
         ingameObject.transform.localScale = new Vector3(scaleX, scaleY, 1);
+
         IngameObject incomp = ingameObject.GetComponent<IngameObject>();
         incomp.objectData = o;
 
@@ -144,9 +179,7 @@ public class TileMap : MonoBehaviour {
             tiles.Add(0, emptytile);
         }
 
-        Texture2D tex = loadTextureFromPath(ts.res_path);
-        if (tex == null)
-            tex = loadTextureFromName(ts.res_name);
+        Texture2D tex = _maploader.tilesetTextureMap[ts];
 
         if (textureResolution != (tex.width / ts.columns)) {
             Debug.LogWarning("tileset resolution not equal to map resolution");
@@ -167,30 +200,6 @@ public class TileMap : MonoBehaviour {
             
             tiles.Add(_lastgid, tex.GetPixels(idOfRow * textureResolution, invertedRow * textureResolution, textureResolution, textureResolution));
         }
-    }
-
-    private Texture2D loadTextureFromName(string res_name)
-    {
-        String filePath = Application.persistentDataPath + "/textures/" + res_name + ".png";
-        if (!File.Exists(filePath))
-            filePath = Application.persistentDataPath + "/textures/" + res_name + ".jpg";
-        if (!File.Exists(filePath))
-            filePath = Application.streamingAssetsPath + "/textures/" + res_name + ".png";
-        if (!File.Exists(filePath))
-            filePath = Application.streamingAssetsPath + "/textures/" + res_name + ".jpg";
-        if (File.Exists(filePath))
-            return new WWW("file:///" + filePath).texture;
-        return Resources.Load("textures/" + res_name) as Texture2D;
-    }
-
-    private Texture2D loadTextureFromPath(string res_path)
-    {
-        String filePath = Application.persistentDataPath + res_path;
-        if (!File.Exists(filePath))
-            filePath = Application.streamingAssetsPath+ res_path;
-        if(File.Exists(filePath))
-            return new WWW("file:///" + filePath).texture;
-        return Resources.Load(res_path.TrimStart('/')) as Texture2D;
     }
 
     void PrepareTileset() {
