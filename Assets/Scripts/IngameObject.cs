@@ -27,6 +27,7 @@ public class IngameObject : MonoBehaviour {
 
             Texture2D texture = new Texture2D(size, size);
             texture.SetPixels(textureColors);
+            texture.Apply();
 
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0, 0));
             sprite_renderer.sprite = sprite;
