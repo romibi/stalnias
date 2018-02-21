@@ -7,7 +7,7 @@ public class CameraFollow : MonoBehaviour {
     public Transform target;
     Camera cam;
 
-    Vector3 camOffset = new Vector3(0,0,-10);
+    Vector3 camOffset = new Vector3(0,0,-5);
 
 	// Use this for initialization
 	void Start () {

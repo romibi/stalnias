@@ -4,6 +4,7 @@ using System.Xml;
 using UnityEngine;
 
 public class DObject {
+    private static int _lastSortingOrder = 1;
     public int id = -1;
     public int gid = -1;
     public float x = -99.0f;
@@ -11,6 +12,7 @@ public class DObject {
     public float w = 0f;
     public float h = 0f;
     public string name = "";
+    public int sortingOrder = 0;
 
     public DObject(XmlNode objectTag)
     {
@@ -33,6 +35,7 @@ public class DObject {
         {
             name = ""+id;
         }
+        sortingOrder = _lastSortingOrder++;
     }
 
     // Use this for initialization

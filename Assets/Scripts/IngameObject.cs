@@ -19,9 +19,8 @@ public class IngameObject : MonoBehaviour {
 		if(objectData.gid>0)
         {
             SpriteRenderer sprite_renderer = GetComponent<SpriteRenderer>();
-            Debug.Log("tilemap: "+tilemap);
-            Debug.Log("tiles:" + tilemap.tiles);
-            Debug.Log("keys:" + tilemap.tiles.Keys);
+            sprite_renderer.sortingOrder = objectData.sortingOrder;
+
             Color[] textureColors = tilemap.tiles[objectData.gid];
 
             int size = tilemap.textureResolution;

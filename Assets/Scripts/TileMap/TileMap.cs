@@ -68,27 +68,30 @@ public class TileMap : MonoBehaviour {
             if(l.GetType() == typeof(DMapLayerObjects)) {
                 DMapLayerObjects ol = (DMapLayerObjects)l;
                 GameObject layerobject = GetObjectLayer(ol, z);
-                if (l.name=="Living") {
-                    DObject dPlayer = ol.objectsByName["Player"];
-                    
-                    GameObject player = GameObject.FindGameObjectWithTag("Player");
-                    float newX = player.transform.position.x;
-                    float newY = player.transform.position.y;
-                    if(dPlayer!=null)
-                    {
-                        Vector2 newPos = MapObjCenterInUPos(dPlayer);
-                        newX = newPos.x;
-                        newY = newPos.y;
-                    }
-
-                    player.transform.position = new Vector3(newX, newY, z);
-                }
                 foreach(DObject obj in ol.objectsById.Values)
                 {
                     if (obj.name == "Player")
-                        continue;
+                    {
+                        DObject dPlayer = obj;
 
-                    LoadObject(obj, layerobject);
+                        GameObject player = GameObject.FindGameObjectWithTag("Player");
+                        float newX = player.transform.position.x;
+                        float newY = player.transform.position.y;
+                        if (dPlayer != null)
+                        {
+                            Vector2 newPos = MapObjCenterInUPos(dPlayer);
+                            newX = newPos.x;
+                            newY = newPos.y;
+                        }
+
+                        player.transform.position = new Vector3(newX, newY, z);
+                        SpriteRenderer sprite_renderer = player.GetComponent<SpriteRenderer>();
+                        sprite_renderer.sortingOrder = dPlayer.sortingOrder;
+                    }
+                    else
+                    {
+                        LoadObject(obj, layerobject);
+                    }
                 }
             }
             z -= 0.1f;
@@ -111,6 +114,7 @@ public class TileMap : MonoBehaviour {
         GameObject olayer = new GameObject(l.name);
         olayer.hideFlags = HideFlags.DontSave;
         olayer.transform.parent = this.transform;
+        olayer.transform.position = olayer.transform.position + new Vector3(0, 0, z);
         return olayer;
     }
 
