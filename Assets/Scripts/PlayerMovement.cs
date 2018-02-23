@@ -24,4 +24,9 @@ public class PlayerMovement : MonoBehaviour {
         
         rbody.MovePosition(rbody.position + movement * Time.deltaTime);
 	}
+
+    public void teleportTo(Vector3 pos)
+    {
+        transform.position = pos + new Vector3(0f, 0.2f, 0f);
+    }
 }

@@ -19,11 +19,28 @@ public class IngameObject : MonoBehaviour {
 
     }
     private List<Vector2[]> collisionbox = null;
+    public List<Collider2D> ignoreTriggerOnce = new List<Collider2D>();
 
     TileMap tilemap {
         get {
             return transform.parent.transform.parent.GetComponent<TileMap>();
         }
+    }
+    
+    float Width {
+        get {
+            return ObjectData.w * tilemap.tileSize / tilemap.textureResolution;
+        }
+    }
+    float Height {
+        get {
+            return ObjectData.w * tilemap.tileSize / tilemap.textureResolution;
+        }
+    }
+
+    public Vector3 getGroundCenterCoordinates()
+    {
+        return transform.position + new Vector3(Width / 2f, Height / 2f, 0f);
     }
 
     // Use this for initialization
@@ -70,23 +87,35 @@ public class IngameObject : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("Colliding with " + collision);
-        if(objectData.properties.ContainsKey("action"))
+        if (ignoreTriggerOnce.Remove(collision))
+            return;
+        if(objectData.properties.ContainsKey("onCollision"))
         {
-            switch(ObjectData.properties["action"])
+            switch(ObjectData.properties["onCollision"])
             {
                 case "tp":
-                    actionTp(collision, ObjectData.properties["destination"]);
+                    teleport(collision, ObjectData.properties["target"]);
                     break;
             }
         }
     }
 
-    private void actionTp(Collider2D collision, string v)
+    private void teleport(Collider2D collision, string v)
     {
         GameObject target = GameObject.Find(v);
         if (target == null)
             return;
-        collision.transform.position = target.transform.position + new Vector3(tilemap.tileSize, tilemap.tileSize, 0);
+
+        PlayerMovement player = collision.GetComponent<PlayerMovement>();
+        if (player == null)
+            return;
+
+        IngameObject targetObject = target.GetComponent<IngameObject>();
+        if (targetObject != null)
+        {
+            targetObject.ignoreTriggerOnce.Add(collision);
+            player.teleportTo(targetObject.getGroundCenterCoordinates());
+        }
     }
 
     // Update is called once per frame

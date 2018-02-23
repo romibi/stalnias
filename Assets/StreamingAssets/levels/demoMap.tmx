@@ -156,11 +156,16 @@
 </data>
  </layer>
  <objectgroup name="Action">
-  <object id="21" name="tpRightSide" gid="38" x="448" y="192" width="32" height="32"/>
+  <object id="21" name="tpRightSide" gid="38" x="448" y="192" width="32" height="32">
+   <properties>
+    <property name="onCollision" value="tp"/>
+    <property name="target" value="tpLeftSide"/>
+   </properties>
+  </object>
   <object id="13" name="tpLeftSide" gid="38" x="137.042" y="219.292" width="47.625" height="47.625">
    <properties>
-    <property name="action" value="tp"/>
-    <property name="destination" value="tpRightSide"/>
+    <property name="onCollision" value="tp"/>
+    <property name="target" value="tpRightSide"/>
    </properties>
   </object>
  </objectgroup>
