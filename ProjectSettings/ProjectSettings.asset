@@ -126,7 +126,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 1.0
+  bundleVersion: "stalnias.\u03B1.unknown"
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -158,11 +158,21 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.Company.ProductName
-    Standalone: unity.romibi.Stalnias
-    Tizen: com.Company.ProductName
-    iOS: com.Company.ProductName
-    tvOS: com.Company.ProductName
+    '': ch.romibi.stalnias
+    Android: ch.romibi.stalnias
+    Facebook: ch.romibi.stalnias
+    Metro: ch.romibi.stalnias
+    N3DS: ch.romibi.stalnias
+    PS4: ch.romibi.stalnias
+    PSM: ch.romibi.stalnias
+    PSP2: ch.romibi.stalnias
+    Standalone: ch.romibi.stalnias
+    Tizen: ch.romibi.stalnias
+    WebGL: ch.romibi.stalnias
+    WiiU: ch.romibi.stalnias
+    XboxOne: ch.romibi.stalnias
+    iOS: ch.romibi.stalnias
+    tvOS: ch.romibi.stalnias
   buildNumber:
     iOS: 0
   AndroidBundleVersionCode: 1
