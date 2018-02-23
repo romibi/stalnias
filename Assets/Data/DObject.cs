@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class DObject {
     public float h = 0f;
     public string name = "";
     public int sortingOrder = 0;
+    public Dictionary<string,string> properties = new Dictionary<string, string>();
 
     public DObject(XmlNode objectTag)
     {
@@ -35,7 +37,26 @@ public class DObject {
         {
             name = ""+id;
         }
+        if (objectTag.HasChildNodes)
+        {
+            foreach (XmlNode child in objectTag.ChildNodes)
+            {
+                switch (child.Name) {
+                    case "properties":
+                        handleProperties(child.ChildNodes);
+                        break;
+                }
+            }
+        }
         sortingOrder = _lastSortingOrder++;
+    }
+
+    private void handleProperties(XmlNodeList props)
+    {
+        foreach (XmlNode property in props)
+        {
+            properties.Add(property.Attributes["name"].Value, property.Attributes["value"].Value);
+        }
     }
 
     // Use this for initialization

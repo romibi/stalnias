@@ -165,7 +165,7 @@ public class TileMap : MonoBehaviour {
         ingameObject.transform.localScale = new Vector3(scaleX, scaleY, 1);
 
         IngameObject incomp = ingameObject.GetComponent<IngameObject>();
-        incomp.objectData = o;
+        incomp.ObjectData = o;
 
         _objects.Add(o.name, ingameObject);
     }
