@@ -99,6 +99,9 @@ public class IngameObject : MonoBehaviour {
                 case "tp":
                     teleport(collision, ObjectData.properties["target"]);
                     break;
+                case "loadMap":
+                    tilemap.RequestMap(ObjectData.properties["target"]);
+                    break;
             }
         }
     }

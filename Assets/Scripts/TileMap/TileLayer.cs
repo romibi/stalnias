@@ -121,7 +121,7 @@ public class TileLayer : MonoBehaviour {
 
                 int tileId = layerdata.tileTypeIdAt(x, y);
                 List<Vector2[]> collisions = tilemap.map.getTilesetForId(tileId).getCollisionForTile(tileId);
-                if (collisions != null) {
+                if (collisions != null && collisions.Count>0) {
                     foreach (Vector2[] collision in collisions) {
                         Vector2[] path = new Vector2[collision.Length];
                         for (int cv = 0; cv < collision.Length; cv++) {

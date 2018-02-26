@@ -39,7 +39,12 @@ public class TileMap : MonoBehaviour {
             LoadMap();
     }
 
-    public void ClearMap() {
+    public void ClearMap()
+    {
+        ClearMap(false);
+    }
+
+    private void ClearMap(bool immediate) {
         _layers.Clear();
         _objects.Clear();
         _maploader = new AssetLoader();
@@ -48,23 +53,27 @@ public class TileMap : MonoBehaviour {
             var mapchilds = transform.Cast<Transform>().ToList();
             foreach (var child in mapchilds)
             {
-                DestroyImmediate(child.gameObject);
+                if (immediate)
+                    DestroyImmediate(child.gameObject);
+                else
+                    Destroy(child.gameObject);
             }
         }
         _lastgid = 0;
         tiles.Clear();
     }
 
-    void RequestMap(String mapId = "")
+    public void RequestMap(String mapId = "")
     {
         if (mapId == "")
             mapId = mapIdToLoadByDefault;
+        ClearMap();
         StartCoroutine(_maploader.loadMapData(mapId));
     }
 
     public IEnumerator EditorRequestMap(String mapId = "")
     {
-        ClearMap();
+        ClearMap(true);
         if (mapId == "")
             mapId = mapIdToLoadByDefault;
         return _maploader.loadMapData(mapId);

@@ -167,7 +167,7 @@ public class DTileSet {
         if (collisionboxes.ContainsKey(id)) {
             return collisionboxes[id];
         } else {
-            return null;
+            return new List<Vector2[]>();
         }
     }
     //terraininfo: in tmx but not (yet) needed
