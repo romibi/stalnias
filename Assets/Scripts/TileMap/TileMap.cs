@@ -18,7 +18,9 @@ public class TileMap : MonoBehaviour {
 
     public Material material;
     public Texture2D mapTileset;
-    public float tileSize = 0.01f;
+    public float tileSize = 1f;
+    public float playerWidth = 2f; // Currently used Textures are 2 tiles wide
+    public string mapIdToLoadByDefault = "demoMap";
     public DMap map;
     
 
@@ -54,14 +56,18 @@ public class TileMap : MonoBehaviour {
         tiles.Clear();
     }
 
-    void RequestMap(String mapId = "demoMap")
+    void RequestMap(String mapId = "")
     {
+        if (mapId == "")
+            mapId = mapIdToLoadByDefault;
         StartCoroutine(_maploader.loadMapData(mapId));
     }
 
-    public IEnumerator EditorRequestMap(String mapId = "demoMap")
+    public IEnumerator EditorRequestMap(String mapId = "")
     {
         ClearMap();
+        if (mapId == "")
+            mapId = mapIdToLoadByDefault;
         return _maploader.loadMapData(mapId);
     }
 
@@ -91,42 +97,16 @@ public class TileMap : MonoBehaviour {
         float z = 0.0f;
         foreach(DMapLayer l in map.layers) {
             if (l.GetType() == typeof(DMapLayerTiles)) {
-                LoadLayers((DMapLayerTiles)l, z);
+                LoadTileLayer((DMapLayerTiles)l, z);
             }
             if(l.GetType() == typeof(DMapLayerObjects)) {
-                DMapLayerObjects ol = (DMapLayerObjects)l;
-                GameObject layerobject = GetObjectLayer(ol, z);
-                foreach(DObject obj in ol.objectsById.Values)
-                {
-                    if (obj.name == "Player")
-                    {
-                        DObject dPlayer = obj;
-
-                        GameObject player = GameObject.FindGameObjectWithTag("Player");
-                        float newX = player.transform.position.x;
-                        float newY = player.transform.position.y;
-                        if (dPlayer != null)
-                        {
-                            Vector2 newPos = MapObjCenterInUPos(dPlayer);
-                            newX = newPos.x;
-                            newY = newPos.y;
-                        }
-
-                        player.transform.position = new Vector3(newX, newY, z);
-                        SpriteRenderer sprite_renderer = player.GetComponent<SpriteRenderer>();
-                        sprite_renderer.sortingOrder = dPlayer.sortingOrder;
-                    }
-                    else
-                    {
-                        LoadObject(obj, layerobject);
-                    }
-                }
+                LoadObjectLayer((DMapLayerObjects)l, z);
             }
             z -= 0.1f;
         }
     }
 
-    void LoadLayers(DMapLayerTiles l, float z) {
+    void LoadTileLayer(DMapLayerTiles l, float z) {
         if (this.transform == null)
             return;
         GameObject tileLayer = new GameObject(l.name, typeof(TileLayer));
@@ -137,6 +117,22 @@ public class TileMap : MonoBehaviour {
         tlcomp.layerdata = l;
 
         _layers.Add(l.name, tileLayer);
+    }
+
+    void LoadObjectLayer(DMapLayerObjects ol, float z)
+    {
+        GameObject layerobject = GetObjectLayer(ol, z);
+        foreach (DObject obj in ol.objectsById.Values)
+        {
+            if (obj.name == "Player")
+            {
+                LoadMapPlayerData(obj, z);
+            }
+            else
+            {
+                LoadObject(obj, layerobject);
+            }
+        }
     }
 
     GameObject GetObjectLayer(DMapLayerObjects l, float z)
@@ -150,6 +146,29 @@ public class TileMap : MonoBehaviour {
         return olayer;
     }
 
+    void LoadMapPlayerData(DObject dPlayer, float z)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        float newX = player.transform.position.x;
+        float newY = player.transform.position.y;
+        if (dPlayer != null)
+        {
+            Vector2 newPos = MapObjCenterInUPos(dPlayer);
+            newX = newPos.x;
+            newY = newPos.y;
+        }
+
+        player.transform.position = new Vector3(newX, newY, z);
+        SpriteRenderer sprite_renderer = player.GetComponent<SpriteRenderer>();
+        sprite_renderer.sortingOrder = dPlayer.sortingOrder;
+
+        float ppu = sprite_renderer.sprite.pixelsPerUnit;
+        float tw = sprite_renderer.sprite.rect.width;
+
+        Vector3 scale = new Vector3(playerWidth * ppu/tw, playerWidth * ppu/tw, 1f);
+        player.transform.localScale = scale;
+    }
+
     void LoadObject(DObject o, GameObject parent)
     {
         if (parent == null)
@@ -158,11 +177,8 @@ public class TileMap : MonoBehaviour {
         ingameObject.hideFlags = HideFlags.DontSave;
         ingameObject.transform.parent = parent.transform;
         Vector2 v = MapPosToUPos(o.x, o.y);
-        float scaleX = o.w / textureResolution;
-        float scaleY = o.h / textureResolution;
 
         ingameObject.transform.position = ingameObject.transform.position + new Vector3(v.x, v.y, 0);
-        ingameObject.transform.localScale = new Vector3(scaleX, scaleY, 1);
 
         IngameObject incomp = ingameObject.GetComponent<IngameObject>();
         incomp.ObjectData = o;

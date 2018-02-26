@@ -67,6 +67,8 @@ public class IngameObject : MonoBehaviour {
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0, 0));
             sprite_renderer.sprite = sprite;
 
+            setSize(new Vector2(objectData.w, objectData.h) / tilemap.textureResolution);
+
             PolygonCollider2D polygon_collider = GetComponent<PolygonCollider2D>();
             polygon_collider.enabled = false;
             if (getCollision() != null)
@@ -125,7 +127,11 @@ public class IngameObject : MonoBehaviour {
 
     private List<Vector2[]> getCollision()
     {
-        if(collisionbox==null)
+        Vector2 scale = getSpriteScale2D();
+        Vector2 inverse_scale = new Vector2(1f,1f);
+        inverse_scale.x /= scale.x;
+        inverse_scale.y /= scale.y;
+        if (collisionbox==null)
         {
             collisionbox = new List<Vector2[]>();
             List<Vector2[]>rawCollisionInfo = tilemap.map.getTilesetForId(ObjectData.gid).getCollisionForTile(ObjectData.gid);
@@ -134,12 +140,43 @@ public class IngameObject : MonoBehaviour {
                 Vector2[] newPath = new Vector2[collpath.Length];
                 for(int i=0;i<collpath.Length;i++)
                 {
-                    newPath[i] = collpath[i] * tilemap.tileSize;
+                    newPath[i] = Vector2.Scale(collpath[i], inverse_scale);
                 }
                 collisionbox.Add(newPath);
             }
         }
 
         return collisionbox;
+    }
+
+    public void setSize(Vector2 size)
+    {
+        setSize(new Vector3(size.x, size.y, 1f));
+    }
+
+    public void setSize(Vector3 size)
+    {
+        Vector3 sprite_scale = getSpriteScale3D();
+        sprite_scale.Scale(size);
+        transform.localScale = sprite_scale;
+    }
+
+    private Vector3 getSpriteScale3D()
+    {
+        Vector3 scale = (Vector3)getSpriteScale2D();
+        scale.z = 1f;
+        return scale;
+    }
+
+    private Vector2 getSpriteScale2D()
+    {
+        SpriteRenderer sprite_renderer = GetComponent<SpriteRenderer>();
+        Sprite sprite = sprite_renderer.sprite;
+        if (sprite == null)
+            Debug.LogWarning("Cannot get sprite scale, no sprite and therefore (texture) size unknown!");
+        Texture2D texture = sprite.texture;
+        if (texture == null)
+            Debug.LogWarning("Cannot get sprite scale, sprite texture size unknown!");
+        return new Vector2(tilemap.tileSize * sprite.pixelsPerUnit / texture.width, tilemap.tileSize * sprite.pixelsPerUnit / texture.width);
     }
 }
