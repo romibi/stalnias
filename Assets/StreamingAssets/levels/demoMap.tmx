@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="32" tileheight="32" infinite="0" nextobjectid="24">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="32" tileheight="32" infinite="0" nextobjectid="27">
  <tileset firstgid="1" name="grass" tilewidth="32" tileheight="32" tilecount="18" columns="3">
   <image source="../textures/grass.png" width="96" height="192"/>
   <tile id="17">
@@ -166,6 +166,12 @@
    <properties>
     <property name="onCollision" value="tp"/>
     <property name="target" value="tpRightSide"/>
+   </properties>
+  </object>
+  <object id="26" name="tpMapRight" gid="38" x="592" y="174.667" width="32" height="32">
+   <properties>
+    <property name="onCollision" value="loadMap"/>
+    <property name="target" value="demoMap2"/>
    </properties>
   </object>
  </objectgroup>
