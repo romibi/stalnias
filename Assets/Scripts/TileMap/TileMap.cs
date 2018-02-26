@@ -13,13 +13,12 @@ public class TileMap : MonoBehaviour {
     Dictionary<string,GameObject> _layers = new Dictionary<string, GameObject>();
     Dictionary<string, GameObject> _objects = new Dictionary<string, GameObject>();
 
-    public int textureResolution = 32;
+    public int textureResolution = 32; // Update any PixelsPerUnit value manually set (e.g. player character tiles)
     int tilesetTexturePadding = 1; // currently supported values: 0 and 1
 
     public Material material;
     public Texture2D mapTileset;
     public float tileSize = 1f;
-    public float playerWidth = 2f; // Currently used Textures are 2 tiles wide
     public string mapIdToLoadByDefault = "demoMap";
     public DMap map;
     
@@ -161,12 +160,6 @@ public class TileMap : MonoBehaviour {
         player.transform.position = new Vector3(newX, newY, z);
         SpriteRenderer sprite_renderer = player.GetComponent<SpriteRenderer>();
         sprite_renderer.sortingOrder = dPlayer.sortingOrder;
-
-        float ppu = sprite_renderer.sprite.pixelsPerUnit;
-        float tw = sprite_renderer.sprite.rect.width;
-
-        Vector3 scale = new Vector3(playerWidth * ppu/tw, playerWidth * ppu/tw, 1f);
-        player.transform.localScale = scale;
     }
 
     void LoadObject(DObject o, GameObject parent)

@@ -145,7 +145,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 713f53db427419d4686a59d58bfc8ae5, type: 2}
   mapTileset: {fileID: 1014444111}
   tileSize: 1
-  playerWidth: 2
+  mapIdToLoadByDefault: demoMap
 --- !u!4 &429481255
 Transform:
   m_ObjectHideFlags: 0
@@ -257,7 +257,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 3.2
+  orthographic size: 3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -280,7 +280,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1875464993}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.76, y: 3.26, z: -5}
+  m_LocalPosition: {x: 3.52, y: 6.38, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -351,7 +351,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 6
+  m_SortingOrder: 9
   m_Sprite: {fileID: 21300046, guid: 55addefa7683ed844a76c7fcd983f912, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -370,7 +370,7 @@ Transform:
   m_GameObject: {fileID: 1928848640}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.53125, y: 6.510417, z: -0.4}
-  m_LocalScale: {x: 3.125, y: 3.125, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1

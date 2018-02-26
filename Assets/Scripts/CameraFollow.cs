@@ -8,12 +8,18 @@ public class CameraFollow : MonoBehaviour {
     Camera cam;
 
     Vector3 camOffset = new Vector3(0,0,-5);
+    private int _minTilesVisible = 5;
+    private int _pixelsPerUnit = 32;
+    private int scaleFactor = 1;
 
 	// Use this for initialization
 	void Start () {
         
         cam = GetComponent<Camera>();
-		
+        while ( ((Screen.height / (float)(2 * _pixelsPerUnit)) / scaleFactor) > _minTilesVisible/2f) {
+            scaleFactor++;
+        }
+        scaleFactor--;
 	}
 	
 	// Update is called once per frame
@@ -23,7 +29,8 @@ public class CameraFollow : MonoBehaviour {
         // size = (screen.height / (2*pixelsPerUnit)) / scaleFactor
         // 1 = (64 / (2*32)) / 1
         // 2 = (128 / 64) / 1
-        cam.orthographicSize = (Screen.height / 64f) / 2f;
+        
+        cam.orthographicSize = (Screen.height / (float)(2 * _pixelsPerUnit)) / scaleFactor;
         if(target) {
             transform.position = Vector3.Lerp(transform.position, target.position+camOffset, 0.1f);
         }
