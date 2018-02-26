@@ -22,11 +22,11 @@ public class PlayerMovement : MonoBehaviour {
             animator.SetBool("iswalking", false);
         }
         
-        rbody.MovePosition(rbody.position + movement * Time.deltaTime);
+        rbody.MovePosition(rbody.position + movement * 2 * Time.deltaTime);
 	}
 
     public void teleportTo(Vector3 pos)
     {
-        transform.position = pos + new Vector3(0f, 0.2f, 0f);
+        transform.position = pos + new Vector3(0f, 0.8f, 0f);
     }
 }
