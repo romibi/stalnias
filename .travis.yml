@@ -6,3 +6,11 @@ install:
 - "./Scripts/install.sh"
 script:
 - "./Scripts/build.sh"
+after_success: |-
+  if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+    openssl aes-256-cbc -K $encrypted_59d5c0d229bd_key -iv $encrypted_59d5c0d229bd_iv -in ./Scripts/travis_deploy_key.enc -out ./Scripts/travis_deploy_key -d
+    eval "$(ssh-agent -s)" #start the ssh agent
+    chmod 600 ./Scripts/travis_deploy_key
+    ssh-add ./Scripts/travis_deploy_key
+    ./Scripts/deploy.sh
+  fi
