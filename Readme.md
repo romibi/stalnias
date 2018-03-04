@@ -1,11 +1,16 @@
-Stalnias the Game
+Stalnias the Game [![Build Status](https://travis-ci.org/romibi/stalnias.svg?branch=master)](https://travis-ci.org/romibi/stalnias)
 =================
 
 This Project will become the Stalnias Game to the Story by `<insert correct alias>` from [easterwoodsound.ch (german)](http://easterwoodsound.ch/de/schreiben).
 
 The Game Code will be Open Source as well as some Demo Content. Everything else is undecided.
 
-##Todo (incomplete list, only basic stuff for now):
+## Download
+Windows, Mac and Linux builds are found here:  
+[Download Link](https://romibi.ch/stalnias/dl/)  
+Automatic Android, WebGL, iOS and Windows UWP builds are planned too.
+
+## Todo (incomplete list, only basic stuff for now):
 - [ ] Tile Map
 	- [x] Textures only
 		- [x] generate mesh(-es) (hard coded)
@@ -21,7 +26,7 @@ The Game Code will be Open Source as well as some Demo Content. Everything else 
 	- [ ] Offline Mode: files (does it work in WebGL?)
 		- [x] load map from tmx & images
 		- [ ] level select
-		- [ ] teleport to different map
+		- [x] teleport to different map
 		- [ ] write support
 		- [ ] update from online
 	- [ ] Online Mode: REST update service (with mysql/postgresql in php? node?)
@@ -30,7 +35,7 @@ The Game Code will be Open Source as well as some Demo Content. Everything else 
 		- [ ] write support (login? how?)
 	- [ ] savegame in playerprefs ?
 - [ ] Objects and NPCs
-	- [ ] 1 Tile sized objects
+	- [x] 1 Tile sized objects
 	- [ ] multi Tile sized objects
 	- [ ] objects you can "hide" behind
 	- [ ] interaction
