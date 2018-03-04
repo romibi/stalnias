@@ -4,6 +4,9 @@
 
 # Change this the name of your project. This will be the name of the final executables as well.
 project="stalnias"
+DATE=`date +%y.%m.%d`
+versionName="a.${DATE}"
+
 
 echo "Attempting to build $project for Windows"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
@@ -44,15 +47,34 @@ echo "Attempting to build $project for Linux"
 echo 'Logs from build'
 cat $(pwd)/unity.log
 
-#echo "Attempting to build $project for WebGL"
+echo "Attempting to build $project for WebGL"
+/Applications/Unity/Unity.app/Contents/MacOS/Unity \
+  -batchmode \
+  -nographics \
+  -silent-crashes \
+  -logFile $(pwd)/unity.log \
+  -projectPath $(pwd)/ \
+  -quit \
+  -executeMethod BuildScript.BuildWebGL "$(pwd)/Build/webgl/$project/"
+echo 'Logs from build'
+cat $(pwd)/unity.log
+
+#export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
+#export ANDROID_NDK_HOME="/usr/local/share/android-ndk"
+#export JAVA_HOME=$(/usr/libexec/java_home)
+
+#echo "ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT}
+#echo "ANDROID_NDK_HOME="${ANDROID_NDK_HOME}
+#echo "JAVA_HOME="${JAVA_HOME}
+
+#echo "Attempting to build $project for Android"
 #/Applications/Unity/Unity.app/Contents/MacOS/Unity \
 #  -batchmode \
 #  -nographics \
 #  -silent-crashes \
 #  -logFile $(pwd)/unity.log \
 #  -projectPath $(pwd)/ \
-#  -buildWebPlayer "$(pwd)/Build/webgl/$project/" \
-#  -quit
-#
+#  -quit \
+#  -executeMethod BuildScript.BuildAndroid $(pwd)/Build/android/${project}.${versionName}.apk
 #echo 'Logs from build'
 #cat $(pwd)/unity.log

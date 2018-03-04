@@ -7,7 +7,7 @@ using UnityEditor.Build;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-class MyCustomBuildProcessor : IPreprocessBuild
+class VerionHelper : IPreprocessBuild
 {
     public int callbackOrder { get { return 0; } }
     public void OnPreprocessBuild(BuildTarget target, string path)

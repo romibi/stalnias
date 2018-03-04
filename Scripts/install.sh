@@ -8,6 +8,17 @@
 Changeset=fc1d3344e6ea
 version=2017.3.1f1
 
+#brew cask install caskroom/versions/java8
+
+#brew cask install android-sdk
+#export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
+
+#brew cask install android-ndk
+#export ANDROID_NDK_HOME="/usr/local/share/android-ndk"
+
+#export JAVA_HOME=$(/usr/libexec/java_home)
+
+
 echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorInstaller/Unity.pkg: "
 curl -o Unity.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorInstaller/Unity.pkg
 sudo installer -dumplog -package Unity.pkg -target /
@@ -58,9 +69,9 @@ sudo installer -dumplog -package UnitySetup-Linux-Support-for-Editor-${version}.
 #curl -o UnitySetup-Tizen-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Tizen-Support-for-Editor-${version}.pkg
 #sudo installer -dumplog -package UnitySetup-Tizen-Support-for-Editor-${version}.pkg -target /
 
-#echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg: "
-#curl -o UnitySetup-WebGL-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg
-#sudo installer -dumplog -package UnitySetup-WebGL-Support-for-Editor-${version}.pkg -target /
+echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg: "
+curl -o UnitySetup-WebGL-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg
+sudo installer -dumplog -package UnitySetup-WebGL-Support-for-Editor-${version}.pkg -target /
 
 echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-${version}.pkg: "
 curl -o UnitySetup-Windows-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-${version}.pkg

@@ -1,9 +1,10 @@
 #!/bin/bash
 project="stalnias"
 DATE=`date +%y.%m.%d`
-versionName="v.a.${DATE}"
+versionName="a.${DATE}"
 imageName="${project}_${versionName}_${TRAVIS_BUILD_NUMBER}_${TRAVIS_COMMIT::8}"
 
+# Prepare
 mkdir ${versionName}
 
 workingDir=`pwd`
@@ -26,11 +27,22 @@ if [ -d Build/linux/ ]; then
 	cd ${workingDir}
 fi
 
-#if [ -d Build/webgl/ ]; then
-#	cd Build/webgl/
-#	zip -r -X ${workingDir}/${versionName}/${imageName}_webgl.zip .
-#	cd ${workingDir}
+if [ -d Build/webgl/ ]; then
+	cd Build/webgl/
+	zip -r -X ${workingDir}/${versionName}/${imageName}_webgl.zip .
+	cd ${workingDir}
+fi
+
+#if [ -d Build/android/ ]; then
+#	cp Build/android/${project}.${versionName}.apk ${workingDir}/${versionName}/${project}.${versionName}.apk
 #fi
+
+
+# Upload
+if [ -d Build/webgl/ ]; then
+	echo "Updating online WebGL page"
+	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q -r Build/webgl/$project/* ${deploy_host}:${deploy_webgl_dir}	
+fi
 
 echo "Uploading packages to server..."
 scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q -r ${versionName} ${deploy_host}:${deploy_root_dir}/${versionName}

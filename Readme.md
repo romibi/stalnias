@@ -6,9 +6,10 @@ This Project will become the Stalnias Game to the Story by `<insert correct alia
 The Game Code will be Open Source as well as some Demo Content. Everything else is undecided.
 
 ## Download
-Windows, Mac and Linux builds are found here:  
+Windows, Mac, Linux and WebGL builds are found here:  
 [Download Link](https://romibi.ch/stalnias/dl/)  
-Automatic Android, WebGL, iOS and Windows UWP builds are planned too.
+The current Web version can found here: [Try now](https://romibi.ch/stalnias/)  
+Builds for further Platforms (Android, iOS, Windows UWP, ...) are planned too.
 
 ## Todo (incomplete list, only basic stuff for now):
 - [ ] Tile Map
