@@ -16,9 +16,8 @@ if [ -d Build/windows/ ]; then
 fi
 
 if [ -d Build/osx/ ]; then
-	cd Build/osx/
-	zip -r -X ${workingDir}/${versionName}/${imageName}_osx.zip .
-	cd ${workingDir}
+	PACKAGESIZE=$(echo "$(du -ms Build/osx/ | cut -f1) * 1.1" | bc)
+	hdiutil create -srcfolder Build/osx -format UDBZ -size ${PACKAGESIZE}M -volname "Stalnias ${versionName}" "${workingDir}/${versionName}/${imageName}_osx.dmg" >/dev/null
 fi
 
 if [ -d Build/linux/ ]; then
@@ -33,9 +32,9 @@ if [ -d Build/webgl/ ]; then
 	cd ${workingDir}
 fi
 
-#if [ -d Build/android/ ]; then
-#	cp Build/android/${project}.${versionName}.apk ${workingDir}/${versionName}/${project}.${versionName}.apk
-#fi
+if [ -d Build/android/ ]; then
+	cp Build/android/${project}.${versionName}.apk ${workingDir}/${versionName}/${project}.${versionName}.apk
+fi
 
 
 # Upload
