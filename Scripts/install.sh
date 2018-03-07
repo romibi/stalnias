@@ -63,6 +63,8 @@ echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/M
 curl -o UnitySetup-Android-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Android-Support-for-Editor-${version}.pkg
 sudo installer -dumplog -package UnitySetup-Android-Support-for-Editor-${version}.pkg -target /
 
+ls -la /Applications/Unity/PlaybackEngines/AndroidPlayer/
+
 #echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-${version}.pkg: "
 #curl -o UnitySetup-iOS-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-${version}.pkg
 #sudo installer -dumplog -package UnitySetup-iOS-Support-for-Editor-${version}.pkg -target /
@@ -71,9 +73,9 @@ sudo installer -dumplog -package UnitySetup-Android-Support-for-Editor-${version
 #curl -o UnitySetup-AppleTV-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-AppleTV-Support-for-Editor-${version}.pkg
 #sudo installer -dumplog -package UnitySetup-AppleTV-Support-for-Editor-${version}.pkg -target /
 
-echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Linux-Support-for-Editor-${version}.pkg: "
-curl -o UnitySetup-Linux-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Linux-Support-for-Editor-${version}.pkg
-sudo installer -dumplog -package UnitySetup-Linux-Support-for-Editor-${version}.pkg -target /
+#echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Linux-Support-for-Editor-${version}.pkg: "
+#curl -o UnitySetup-Linux-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Linux-Support-for-Editor-${version}.pkg
+#sudo installer -dumplog -package UnitySetup-Linux-Support-for-Editor-${version}.pkg -target /
 
 #echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Samsung-TV-Support-for-Editor-${version}.pkg: "
 #curl -o UnitySetup-Samsung-TV-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Samsung-TV-Support-for-Editor-${version}.pkg
@@ -83,10 +85,10 @@ sudo installer -dumplog -package UnitySetup-Linux-Support-for-Editor-${version}.
 #curl -o UnitySetup-Tizen-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Tizen-Support-for-Editor-${version}.pkg
 #sudo installer -dumplog -package UnitySetup-Tizen-Support-for-Editor-${version}.pkg -target /
 
-echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg: "
-curl -o UnitySetup-WebGL-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg
-sudo installer -dumplog -package UnitySetup-WebGL-Support-for-Editor-${version}.pkg -target /
+#echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg: "
+#curl -o UnitySetup-WebGL-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-WebGL-Support-for-Editor-${version}.pkg
+#sudo installer -dumplog -package UnitySetup-WebGL-Support-for-Editor-${version}.pkg -target /
 
-echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-${version}.pkg: "
-curl -o UnitySetup-Windows-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-${version}.pkg
-sudo installer -dumplog -package UnitySetup-Windows-Support-for-Editor-${version}.pkg -target /
+#echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-${version}.pkg: "
+#curl -o UnitySetup-Windows-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-${version}.pkg
+#sudo installer -dumplog -package UnitySetup-Windows-Support-for-Editor-${version}.pkg -target /
