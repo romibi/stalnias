@@ -17,7 +17,9 @@ public class BuildScript {
     }
 
     public static void Build(BuildTarget target) {
+        VersionHelper.setBuildProperties();
         string[] levels = { "Assets/main.unity" };
         BuildPipeline.BuildPlayer(levels.ToArray(), Environment.GetCommandLineArgs().Last(), target, BuildOptions.None);
+        VersionHelper.revertBuildPropertiesToDefault();
     }
 }

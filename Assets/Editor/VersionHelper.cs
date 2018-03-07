@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using UnityEditor;
@@ -7,10 +6,25 @@ using UnityEditor.Build;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-class VerionHelper : IPreprocessBuild
+class VersionHelper : IPreprocessBuild
 {
     public int callbackOrder { get { return 0; } }
     public void OnPreprocessBuild(BuildTarget target, string path)
+    {
+#if UNITY_EDITOR
+        setBuildProperties();
+#endif
+    }
+
+    [PostProcessBuild]
+    public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
+    {
+#if UNITY_EDITOR
+        revertBuildPropertiesToDefault();
+#endif
+    }
+
+    public static void setBuildProperties()
     {
         DateTime currdate = DateTime.Now;
         string versionAppend = "";
@@ -31,8 +45,7 @@ class VerionHelper : IPreprocessBuild
         //update switch, ps4 etc stuff
     }
 
-    [PostProcessBuild]
-    public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
+    public static void revertBuildPropertiesToDefault()
     {
         PlayerSettings.bundleVersion = "stalnias.α.unknown";
         PlayerSettings.iOS.buildNumber = "0";
@@ -70,6 +83,4 @@ class VerionHelper : IPreprocessBuild
 
         return strCommit;
     }
-
 }
-#endif
