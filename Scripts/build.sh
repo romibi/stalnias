@@ -13,51 +13,40 @@ echo "Attempting to build $project for Windows"
   -batchmode \
   -nographics \
   -silent-crashes \
-  -logFile $(pwd)/unity.log \
+  -logFile \
   -projectPath $(pwd)/ \
   -buildWindowsPlayer "$(pwd)/Build/windows/$project.exe" \
   -quit
-
-echo 'Logs from build'
-cat $(pwd)/unity.log
 
 echo "Attempting to build $project for OS X"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
   -batchmode \
   -nographics \
   -silent-crashes \
-  -logFile $(pwd)/unity.log \
+  -logFile \
   -projectPath $(pwd)/ \
   -buildOSXUniversalPlayer "$(pwd)/Build/osx/$project.app" \
   -quit
-
-echo 'Logs from build'
-cat $(pwd)/unity.log
 
 echo "Attempting to build $project for Linux"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
   -batchmode \
   -nographics \
   -silent-crashes \
-  -logFile $(pwd)/unity.log \
+  -logFile \
   -projectPath $(pwd)/ \
   -buildLinuxUniversalPlayer "$(pwd)/Build/linux/$project" \
   -quit
-
-echo 'Logs from build'
-cat $(pwd)/unity.log
 
 echo "Attempting to build $project for WebGL"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
   -batchmode \
   -nographics \
   -silent-crashes \
-  -logFile $(pwd)/unity.log \
+  -logFile \
   -projectPath $(pwd)/ \
   -quit \
   -executeMethod BuildScript.BuildWebGL "$(pwd)/Build/webgl/$project/"
-echo 'Logs from build'
-cat $(pwd)/unity.log
 
 #export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
 #export ANDROID_NDK_HOME="/usr/local/share/android-ndk"
