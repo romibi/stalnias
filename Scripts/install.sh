@@ -8,16 +8,14 @@
 Changeset=fc1d3344e6ea
 version=2017.3.1f1
 
-#brew cask install caskroom/versions/java8
+brew cask install caskroom/versions/java8
+export JAVA_HOME=$(/usr/libexec/java_home)
 
-#brew cask install android-sdk
-#export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
+brew cask install android-sdk
+export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
 
-#brew cask install android-ndk
-#export ANDROID_NDK_HOME="/usr/local/share/android-ndk"
-
-#export JAVA_HOME=$(/usr/libexec/java_home)
-
+brew cask install android-ndk
+export ANDROID_NDK_HOME="/usr/local/share/android-ndk"
 
 echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorInstaller/Unity.pkg: "
 curl -o Unity.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorInstaller/Unity.pkg
@@ -45,9 +43,9 @@ sudo installer -dumplog -package StandardAssets.pkg -target /
 #curl -o UnitySetup-Mac-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Mac-Support-for-Editor-${version}.pkg
 #sudo installer -dumplog -package UnitySetup-Mac-Support-for-Editor-${version}.pkg -target /
 
-#echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Android-Support-for-Editor-${version}.pkg: "
-#curl -o UnitySetup-Android-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Android-Support-for-Editor-${version}.pkg
-#sudo installer -dumplog -package UnitySetup-Android-Support-for-Editor-${version}.pkg -target /
+echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Android-Support-for-Editor-${version}.pkg: "
+curl -o UnitySetup-Android-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-Android-Support-for-Editor-${version}.pkg
+sudo installer -dumplog -package UnitySetup-Android-Support-for-Editor-${version}.pkg -target /
 
 #echo "Downloading from http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-${version}.pkg: "
 #curl -o UnitySetup-iOS-Support-for-Editor-${version}.pkg http://download.unity3d.com/download_unity/${Changeset}/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-${version}.pkg
